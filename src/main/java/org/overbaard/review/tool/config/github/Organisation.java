@@ -7,7 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -16,12 +18,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "gh_organisation")
+@NamedQuery(name = "Organisation.findAll",
+        query = "SELECT o FROM Organisation o ORDER BY o.orgName",
+        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
 public class Organisation {
 
     @Id
     @SequenceGenerator(
             name = "ghOrganisationSequence",
-            sequenceName = "gh-organisation_id_seq",
+            sequenceName = "gh_organisation_id_seq",
             allocationSize = 1,
             initialValue = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ghOrganisationSequence")

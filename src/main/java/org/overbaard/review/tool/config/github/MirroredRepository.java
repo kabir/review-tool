@@ -20,7 +20,7 @@ public class MirroredRepository {
     @Id
     @SequenceGenerator(
             name = "ghMirroredRepositorySequence",
-            sequenceName = "gh-mirrored_repository_id_seq",
+            sequenceName = "gh_mirrored_repository_id_seq",
             allocationSize = 1,
             initialValue = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ghMirroredRepositorySequence")

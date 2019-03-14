@@ -1,3 +1,2 @@
-INSERT INTO known_fruits(id, name) VALUES (1, 'Cherry')
-INSERT INTO known_fruits(id, name) VALUES (2, 'Apple')
-INSERT INTO known_fruits(id, name) VALUES (3, 'Banana')
+INSERT INTO gh_organisation(id, org_name, tool_repo) VALUES (1, 'My Project', 'myproject-review')
+INSERT INTO gh_organisation(id, org_name, tool_repo) VALUES (2, 'Overbård', 'overbaard-review')
