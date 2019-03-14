@@ -1,10 +1,10 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { TestAComponent } from './test-a/test-a.component';
-import { TestBComponent } from './test-b/test-b.component';
+import {AppRoutingModule} from './app-routing.module';
+import {AppComponent} from './app.component';
+import {TestAComponent} from './test-a/test-a.component';
+import {TestBComponent} from './test-b/test-b.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +16,8 @@ import { TestBComponent } from './test-b/test-b.component';
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

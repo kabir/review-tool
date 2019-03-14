@@ -18,8 +18,10 @@ public class ErrorMapper implements ExceptionMapper<Exception> {
         if (exception instanceof WebApplicationException) {
             code = ((WebApplicationException) exception).getResponse().getStatus();
         }
+
+        String message = exception.getMessage() != null ? exception.getMessage() : "";
         return Response.status(code)
-                .entity(Json.createObjectBuilder().add("error", exception.getMessage()).add("code", code).build())
+                .entity(Json.createObjectBuilder().add("error", message).add("code", code).build())
                 .build();
     }
 
