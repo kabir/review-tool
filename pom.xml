@@ -124,7 +124,7 @@
                             <run>
                                 <env>
                                     <POSTGRES_USER>quarkus_test</POSTGRES_USER>
-                                    <POSTGRES_PASSWORD>quarkus_test</POSTGRES_PASSWORD>
+                                    <POSTGRES_PASSWORD>test123</POSTGRES_PASSWORD>
                                     <POSTGRES_DB>quarkus_test</POSTGRES_DB>
                                 </env>
                                 <ports>
