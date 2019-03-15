@@ -1,9 +1,66 @@
-<!--The content below is only test-a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="root-container">
+  <mat-sidenav-container #navigation class="sidenav-container">
+    <mat-sidenav mode="over" #navigation class="sidenav-navigation">
+      <div style="display: flex; flex-direction: column; width: 100%; height: 100%">
+        <div class="sidenav-header">
+          <img src="/assets/images/overbard_logo_color_100px.png">
+        </div>
+        <mat-nav-list>
+          <a *ngFor="let navItem of navItems ; trackBy: navItemTrackByFn"
+             mat-list-item
+             (click)="navigation.close()"
+             routerLinkActive
+             [routerLink]="[navItem.route]">
+            <mat-icon>{{navItem.icon}}</mat-icon>
+            {{navItem.name}}
+          </a>
+        </mat-nav-list>
+        <div class="space-filler"></div>
+        <div style="display: flex; flex-direction: column; width: 100%">
+          <mat-nav-list>
+            <a
+              href="{{jiraUrl}}"
+              mat-list-item>
+              <mat-icon>home</mat-icon>
+              Back to Jira
+            </a>
+            <a
+              href="https://overbaard.github.io/docs/index.html"
+              target="_blank"
+              mat-list-item>
+              <mat-icon>help</mat-icon>
+              Help
+            </a>
+            <mat-list-item>
+              <a href="https://github.com/overbaard/overbaard" target="_blank">
+                <img src="/assets/images/GitHub-Mark-32px.png" class="gh-link-image">
+                GitHub
+              </a>
+            </mat-list-item>
+          </mat-nav-list>
+          <mat-list>
+            <mat-list-item>
+              <div class="mat-caption">Overbård version {{version$ | async}}</div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+    </mat-sidenav>
+    <mat-toolbar color="primary" class="mat-elevation-z10"  [ngStyle]="{'min-height': toolbarHeight, 'max-height': toolbarHeight}">
+      <span>
+        <button mat-icon-button (click)="navigation.open('mouse')">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </span>
+      <span class="side-drawer-logo-container"><img src="/assets/images/overbard_logotype_white_100px.svg" height="32px"></span>
+      <span style="padding-left: 10px;">Review</span>
+    </mat-toolbar>
+    <div class="inner-sidenav-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-container>
 </div>
 
-<router-outlet></router-outlet>
+<div class="wait-screen" *ngIf="loading$ | async">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>

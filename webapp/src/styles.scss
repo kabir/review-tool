@@ -1,1 +1,58 @@
 /* You can add global styles to this file, and also import other style files */
+/*@import "~@angular/material/prebuilt-themes/indigo-pink.css";*/
+@import '~material-design-icons/iconfont/material-icons.css';
+
+/* It would be nice to figure out how to store this locally */
+@import url('https://fonts.googleapis.com/icon?family=Roboto');
+
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #fafafa;
+  font-family: Roboto, sans-serif;
+}
+.app{
+  height: 100vh;
+}
+mat-toolbar {
+  z-index: 10;
+}
+
+/*
+Override the padding (24px) in MatDialog since it is impossible to get rid of it in our own components.
+Components wanting this padding should introduce it again
+ */
+.mat-dialog-container {
+  padding: 0 !important;
+}
+
+/* If we change the theme, we need to update these */
+$primary-colour: #1d679c!important;
+$accent-colour: #ff4080!important;
+$primary-colour-light: #3d96cb!important;
+$accent-colour-light: ff6498!important;
+$white-text: #FFF!important;
+$black-text: rgba(0,0,0,.87)!important;
+.primary-color {
+  color: $primary-colour;
+}
+.accent-color {
+  color: $accent-colour;
+}
+.background-primary-color {
+  background-color: $primary-colour;
+}
+.background-accent-color {
+  background-color: $accent-colour;
+}
+.white-text {
+  color: $white-text;
+}
+
+$disabled-issue-colour: #ddd!important;
+
+.space-filler {
+  flex-grow: 1;
+}
+
+

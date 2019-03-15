@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {TOOLBAR_HEIGHT} from './common/view-constants';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'webapp';
+
+  readonly toolbarHeight: number = TOOLBAR_HEIGHT;
 }
