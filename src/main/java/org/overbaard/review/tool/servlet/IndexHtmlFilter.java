@@ -25,7 +25,6 @@ public class IndexHtmlFilter extends HttpFilter {
 
         Pattern pattern = Pattern.compile(".*[.][a-zA-Z\\d]+");
 
-        boolean redirect = false;
         if (path.equals("") || pattern.matcher(path).matches()
             // TODO Might be hetter to move all the rest apis under /rest
             || path.startsWith("/config/")) {
