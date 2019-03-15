@@ -16,11 +16,10 @@
 
         <!-- Plugins -->
         <version.checkstyle.plugin>3.0.0</version.checkstyle.plugin>
-        <version.frontend-maven-plugin>1.6</version.frontend-maven-plugin>
-        <version.resources-plugin>3.0.2</version.resources-plugin>
+        <version.frontend-maven-plugin>1.7.5</version.frontend-maven-plugin>
+        <version.resources-plugin>3.1.0</version.resources-plugin>
 
-        <!-- use older version of checkstyle as otherwise lots of checks fail -->
-        <version.checkstyle>8.5</version.checkstyle>
+        <version.checkstyle>8.18</version.checkstyle>
 
     </properties>
 
