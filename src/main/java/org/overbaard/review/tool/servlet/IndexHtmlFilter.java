@@ -26,8 +26,7 @@ public class IndexHtmlFilter extends HttpFilter {
         Pattern pattern = Pattern.compile(".*[.][a-zA-Z\\d]+");
 
         if (path.equals("") || pattern.matcher(path).matches()
-            // TODO Might be hetter to move all the rest apis under /rest
-            || path.startsWith("/config/")) {
+            || path.startsWith("/api/")) {
             chain.doFilter(request, response);
         } else {
             request.getRequestDispatcher("/index.html").forward(request, response);

@@ -17,7 +17,7 @@ public class ConfigEndpointTest {
     @Test
     public void testListCreateDeleteOrganisations() {
         given()
-                .when().get("/config/organisations")
+                .when().get("/api/config/organisations")
                 .then()
                 .statusCode(200)
                 .body("size()", is(2))
@@ -35,7 +35,7 @@ public class ConfigEndpointTest {
                         .add("orgName", "New One")
                         .add("toolPrRepo", "new-review")
                         .build().toString())
-                .when().post("/config/organisations")
+                .when().post("/api/config/organisations")
                 .then()
                 .statusCode(201)
                 .body("id", greaterThan(2))
@@ -45,7 +45,7 @@ public class ConfigEndpointTest {
 
         // Check the full list again
         given()
-                .when().get("/config/organisations")
+                .when().get("/api/config/organisations")
                 .then()
                 .statusCode(200)
                 .body("size()", is(3))
@@ -58,12 +58,12 @@ public class ConfigEndpointTest {
 
         // Delete the added org
         given()
-                .when().delete("/config/organisations/" + id)
+                .when().delete("/api/config/organisations/" + id)
                 .then()
                 .statusCode(204);
 
         given()
-                .when().get("/config/organisations")
+                .when().get("/api/config/organisations")
                 .then()
                 .statusCode(200)
                 .log().all()
@@ -75,7 +75,7 @@ public class ConfigEndpointTest {
     @Test
     public void testGetOrganisation() {
         given()
-                .when().get("/config/organisations/1")
+                .when().get("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
                 .body("id", equalTo(1))
@@ -83,7 +83,7 @@ public class ConfigEndpointTest {
                 .body("toolPrRepo", equalTo("myproject-review"));
 
         given()
-                .when().get("/config/organisations/2")
+                .when().get("/api/config/organisations/2")
                 .then()
                 .statusCode(200)
                 .body("id", equalTo(2))
@@ -100,7 +100,7 @@ public class ConfigEndpointTest {
                         .add("orgName", "Overdone")
                         .add("toolPrRepo", "overlord")
                         .build().toString())
-                .when().put("/config/organisations/2")
+                .when().put("/api/config/organisations/2")
                 .then()
                 .statusCode(200)
                 .body("id", equalTo(2))
@@ -113,7 +113,7 @@ public class ConfigEndpointTest {
                         .add("orgName", "Overbård")
                         .add("toolPrRepo", "overbaard-review")
                         .build().toString())
-                .when().put("/config/organisations/2")
+                .when().put("/api/config/organisations/2")
                 .then()
                 .statusCode(200);
     }
