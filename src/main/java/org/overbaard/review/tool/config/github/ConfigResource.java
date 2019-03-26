@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
-@Path("config")
+@Path("/api/config")
 @ApplicationScoped
 @Produces("application/json")
 @Consumes("application/json")

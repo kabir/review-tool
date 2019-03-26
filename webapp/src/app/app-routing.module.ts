@@ -1,21 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {TestAComponent} from './test-a/test-a.component';
-import {TestBComponent} from './test-b/test-b.component';
-import {TestCComponent} from './test-c/test-c.component';
+import {HomeComponent} from './components/home/home.component';
+import {TokenComponent} from './components/token/token.component';
 
 const routes: Routes = [
   {
-    path: '', redirectTo: '/a', pathMatch: 'full'
+    path: '', pathMatch: 'full', component: HomeComponent
   },
   {
-    path: 'a', component: TestAComponent
+    path: 'home', pathMatch: 'full', redirectTo: ''
   },
   {
-    path: 'b', component: TestBComponent
-  },
-  {
-    path: 'c', component: TestCComponent
+    path: 'token', component: TokenComponent
   }
 ];
 

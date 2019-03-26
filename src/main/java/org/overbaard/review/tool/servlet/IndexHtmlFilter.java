@@ -1,8 +1,8 @@
 package org.overbaard.review.tool.servlet;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -15,21 +15,23 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
-@WebFilter("/*")
+@WebFilter(filterName = "indexFilter")
+// url-pattern: "/*" set in web.xml
 public class IndexHtmlFilter extends HttpFilter {
+
+    @Inject
+    PathUtil pathUtil;
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        String path = request.getRequestURI().substring(request.getContextPath().length()).replaceAll("[/]+$", "");
 
-        Pattern pattern = Pattern.compile(".*[.][a-zA-Z\\d]+");
+        PathUtil.PathInfo pathInfo = pathUtil.getPathInfo(req);
 
-        if (path.equals("") || pattern.matcher(path).matches()
-            || path.startsWith("/api/")) {
+        if (!pathUtil.getPathInfo(req).isIndexHtmlRequest()) {
             chain.doFilter(request, response);
         } else {
-            request.getRequestDispatcher("/index.html").forward(request, response);
+            request.getRequestDispatcher("/").forward(request, response);
         }
     }
 }

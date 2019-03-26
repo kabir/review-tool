@@ -5,6 +5,7 @@
         <div class="sidenav-header">
           <img src="/assets/images/overbard_logo_color_100px.png">
         </div>
+<!--
         <mat-nav-list>
           <a *ngFor="let navItem of navItems ; trackBy: navItemTrackByFn"
              mat-list-item
@@ -15,10 +16,11 @@
             {{navItem.name}}
           </a>
         </mat-nav-list>
+-->
         <div class="space-filler"></div>
         <div style="display: flex; flex-direction: column; width: 100%">
           <mat-nav-list>
-            <a
+<!--            <a
               href="{{jiraUrl}}"
               mat-list-item>
               <mat-icon>home</mat-icon>
@@ -36,13 +38,15 @@
                 <img src="/assets/images/GitHub-Mark-32px.png" class="gh-link-image">
                 GitHub
               </a>
-            </mat-list-item>
+            </mat-list-item>-->
           </mat-nav-list>
+<!--
           <mat-list>
             <mat-list-item>
               <div class="mat-caption">Overbård version {{version$ | async}}</div>
             </mat-list-item>
           </mat-list>
+-->
         </div>
       </div>
     </mat-sidenav>
@@ -54,13 +58,26 @@
       </span>
       <span class="side-drawer-logo-container"><img src="/assets/images/overbard_logotype_white_100px.svg" height="32px"></span>
       <span style="padding-left: 10px;">Review</span>
+      <span class="space-filler"></span>
+      <span *ngIf=" authTokenService.loggedIn$ | async ; else notLoggedIn">
+        <a href="Log out" (click)="onLogout($event)" class="toolbar-link">Log out</a>
+      </span>
+      <ng-template #notLoggedIn>
+        <a href="Log in" (click)="onLogin($event)" class="toolbar-link">Log in</a>
+      </ng-template>
     </mat-toolbar>
     <div class="inner-sidenav-content">
       <router-outlet></router-outlet>
+
+
+      <!-- Some temporary code to log in -->
+      <a (click)="onLogin($event)" href="login">Log in</a>
     </div>
   </mat-sidenav-container>
 </div>
 
+<!--
 <div class="wait-screen" *ngIf="loading$ | async">
   <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 </div>
+-->
