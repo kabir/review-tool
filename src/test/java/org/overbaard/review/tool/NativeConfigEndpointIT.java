@@ -1,3 +1,5 @@
+package org.overbaard.review.tool;
+
 import io.quarkus.test.junit.SubstrateTest;
 
 @SubstrateTest

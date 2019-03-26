@@ -1,8 +1,8 @@
 package org.overbaard.review.tool.config.github;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,12 +18,12 @@ import javax.ws.rs.core.Response;
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
-@Path("config")
+@Path("/api/config")
 @ApplicationScoped
 @Produces("application/json")
 @Consumes("application/json")
 public class ConfigResource {
-    @Inject
+    @PersistenceContext
     EntityManager entityManager;
 
     private static final Organisation[] EMPTY_ORGANISATIONS = new Organisation[0];

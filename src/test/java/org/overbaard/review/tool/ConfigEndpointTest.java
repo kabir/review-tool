@@ -1,3 +1,5 @@
+package org.overbaard.review.tool;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import io.restassured.http.Header;
 
 
 @QuarkusTest
@@ -17,6 +20,7 @@ public class ConfigEndpointTest {
     @Test
     public void testListCreateDeleteOrganisations() {
         given()
+                .header(new Header("Authorization", "dummy"))
                 .when().get("/api/config/organisations")
                 .then()
                 .statusCode(200)
@@ -30,6 +34,7 @@ public class ConfigEndpointTest {
 
         // Add an organisation
         int id = given()
+                .header(new Header("Authorization", "dummy"))
                 .contentType(ContentType.JSON)
                 .body(Json.createObjectBuilder()
                         .add("orgName", "New One")
@@ -45,6 +50,7 @@ public class ConfigEndpointTest {
 
         // Check the full list again
         given()
+                .header(new Header("Authorization", "dummy"))
                 .when().get("/api/config/organisations")
                 .then()
                 .statusCode(200)
@@ -58,11 +64,13 @@ public class ConfigEndpointTest {
 
         // Delete the added org
         given()
+                .header(new Header("Authorization", "dummy"))
                 .when().delete("/api/config/organisations/" + id)
                 .then()
                 .statusCode(204);
 
         given()
+                .header(new Header("Authorization", "dummy"))
                 .when().get("/api/config/organisations")
                 .then()
                 .statusCode(200)
@@ -75,6 +83,7 @@ public class ConfigEndpointTest {
     @Test
     public void testGetOrganisation() {
         given()
+                .header(new Header("Authorization", "dummy"))
                 .when().get("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
@@ -83,6 +92,7 @@ public class ConfigEndpointTest {
                 .body("toolPrRepo", equalTo("myproject-review"));
 
         given()
+                .header(new Header("Authorization", "dummy"))
                 .when().get("/api/config/organisations/2")
                 .then()
                 .statusCode(200)
@@ -95,6 +105,7 @@ public class ConfigEndpointTest {
     @Test
     public void testUpdateOrganisation() {
         given()
+                .header(new Header("Authorization", "dummy"))
                 .contentType(ContentType.JSON)
                 .body(Json.createObjectBuilder()
                         .add("orgName", "Overdone")
@@ -108,6 +119,7 @@ public class ConfigEndpointTest {
                 .body("toolPrRepo", equalTo("overlord"));
 
         given()
+                .header(new Header("Authorization", "dummy"))
                 .contentType(ContentType.JSON)
                 .body(Json.createObjectBuilder()
                         .add("orgName", "Overbård")
