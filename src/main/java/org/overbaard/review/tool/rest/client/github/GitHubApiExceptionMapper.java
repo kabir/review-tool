@@ -9,6 +9,11 @@ import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
 public class GitHubApiExceptionMapper implements ResponseExceptionMapper<BaseClientException> {
+
+    GitHubApiExceptionMapper() {
+        // Needed for native image generation
+    }
+
     @Override
     public boolean handles(int status, MultivaluedMap<String, Object> headers) {
         return status == 401;

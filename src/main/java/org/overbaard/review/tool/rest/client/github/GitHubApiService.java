@@ -6,7 +6,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.overbaard.review.tool.security.github.GitHubUser;
 
@@ -18,7 +17,7 @@ import org.overbaard.review.tool.security.github.GitHubUser;
  */
 @Path("/")
 @RegisterRestClient
-@RegisterProvider(GitHubApiExceptionMapper.class)
+// @RegisterProvider(GitHubApiExceptionMapper.class)
 public interface GitHubApiService {
 
     @POST

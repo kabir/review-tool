@@ -25,8 +25,6 @@ public class AuthenticationService {
 
     private final ExpiryCache<String, GitHubUser> tokenToUserMappings = new ExpiryCache<>(50, 2);
 
-
-
     @Transactional
     public AuthenticationRequest recordNewAuthenticationRequest(String path) {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(path);
