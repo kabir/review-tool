@@ -6,5 +6,6 @@ JiraBackup.zip
 .classpath
 *.iml
 quarkus.log
+ObjectStore/
 
 github_keys

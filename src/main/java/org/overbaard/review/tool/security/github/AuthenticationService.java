@@ -1,6 +1,7 @@
 package org.overbaard.review.tool.security.github;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -13,48 +14,48 @@ import org.overbaard.review.tool.rest.client.github.GitHubRestClient;
 import org.overbaard.review.tool.rest.client.github.NotAuthorizedException;
 import org.overbaard.review.tool.util.ExpiryCache;
 
+import io.quarkus.scheduler.Scheduled;
+
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
 @ApplicationScoped
 public class AuthenticationService {
+
+    ExpiryCache<UUID, AuthenticationRequest> authenticationRequests = new ExpiryCache<>(5 * 60);
+
     @PersistenceContext
     EntityManager entityManager;
 
     @Inject
     GitHubRestClient restClient;
 
-    private final ExpiryCache<String, GitHubUser> tokenToUserMappings = new ExpiryCache<>(50, 2);
+    @Scheduled(every = "30s", delay = 30, delayUnit = TimeUnit.SECONDS)
+    public void evictExpiredAuthenticationRequests() {
+        authenticationRequests.evictExpiredEntries();
+    }
 
 
-
-    @Transactional
     public AuthenticationRequest recordNewAuthenticationRequest(String path) {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(path);
-        entityManager.persist(authenticationRequest);
+        authenticationRequests.add(authenticationRequest.getId(), authenticationRequest);
         return authenticationRequest;
     }
 
-    @Transactional
     public AuthenticationRequest loadAuthenticationRequest(String uuidString) {
         UUID uuid = UUID.fromString(uuidString);
-        AuthenticationRequest request = entityManager.find(AuthenticationRequest.class, uuid);
+        AuthenticationRequest request = authenticationRequests.get(uuid);
         return request;
     }
 
-    @Transactional
     public void deleteAuthenticationRequest(String uuidString) {
         UUID uuid = UUID.fromString(uuidString);
-        AuthenticationRequest request = entityManager.getReference(AuthenticationRequest.class, uuid);
-        if (request != null) {
-            entityManager.remove(request);
-        }
+        authenticationRequests.remove(uuid);
     }
 
-    @Transactional
     public void storeToken(String uuidString, String token) {
         UUID uuid = UUID.fromString(uuidString);
-        AuthenticationRequest request = entityManager.find(AuthenticationRequest.class, uuid);
+        AuthenticationRequest request = authenticationRequests.get(uuid);
         if (request == null) {
             throw new NullPointerException("Could not find authentication request");
         }
