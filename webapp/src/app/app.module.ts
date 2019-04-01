@@ -5,10 +5,11 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from './material.module';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './components/home/home.component';
 import {TokenComponent} from './components/token/token.component';
 import {AuthTokenService} from './services/auth-token.service';
+import {AuthTokenInterceptor} from './interceptors/auth-token.interceptor';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import {AuthTokenService} from './services/auth-token.service';
     MaterialModule
   ],
   providers: [
-    AuthTokenService
+    AuthTokenService,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })
