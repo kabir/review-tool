@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {catchError, map, take, timeout} from 'rxjs/operators';
 import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
+import {environment} from '../../environments/environment';
 
 const HAS_BEEN_LOGGED_IN = 'overbaard.review.tool.has-been-logged-in';
 
@@ -10,8 +11,12 @@ export class AuthTokenService {
 
   private _tokenHeader: string;
   private _loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private _proxy: boolean;
+  private _origin: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private _http: HttpClient) {
+    this._proxy = environment.proxy;
+    this._origin = window.location.origin;
   }
 
   get loggedIn$(): Observable<boolean> {
@@ -24,7 +29,7 @@ export class AuthTokenService {
 
   exchangeForToken(uuid: string): Observable<string> {
     const returnObservable$: Subject<string> = new Subject<string>();
-    this.http.post<TokenResponse>(
+    this._http.post<TokenResponse>(
       '/auth/exchange',
       {uuid},
       {
@@ -61,7 +66,10 @@ export class AuthTokenService {
   logIn() {
     const path = location.href.substring(location.origin.length);
     const encodedPath = encodeURIComponent(path);
-    const href = '/auth/login?path=' + encodedPath;
+    let href = '/auth/login?path=' + encodedPath;
+    if (this._proxy) {
+      href += '&proxy.url=' + encodeURIComponent(this._origin);
+    }
     console.log('Going to login at: ' + href);
     window.location.href = href;
   }

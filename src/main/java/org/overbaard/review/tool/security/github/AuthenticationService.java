@@ -36,8 +36,8 @@ public class AuthenticationService {
     }
 
 
-    public AuthenticationRequest recordNewAuthenticationRequest(String path) {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest(path);
+    public AuthenticationRequest recordNewAuthenticationRequest(String path, String proxyUrl) {
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest(path, proxyUrl);
         authenticationRequests.add(authenticationRequest.getId(), authenticationRequest);
         return authenticationRequest;
     }

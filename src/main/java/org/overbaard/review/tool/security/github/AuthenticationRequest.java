@@ -11,11 +11,14 @@ public class AuthenticationRequest {
 
     private final String requestedPath;
 
+    private final String proxyUrl;
+
     private volatile String token;
 
-    public AuthenticationRequest(String requestedPath) {
+    public AuthenticationRequest(String requestedPath, String proxyUrl) {
         this.id = UUID.randomUUID();
         this.requestedPath = requestedPath;
+        this.proxyUrl = proxyUrl;
     }
 
     public UUID getId() {
@@ -24,6 +27,10 @@ public class AuthenticationRequest {
 
     public String getRequestedPath() {
         return requestedPath;
+    }
+
+    public String getProxyUrl() {
+        return proxyUrl;
     }
 
     public String getToken() {

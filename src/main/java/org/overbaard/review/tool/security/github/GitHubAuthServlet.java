@@ -34,7 +34,9 @@ public class GitHubAuthServlet extends HttpServlet {
         if (path.equals("/auth/login")) {
 
             AuthenticationRequest authenticationRequest =
-                    authenticationService.recordNewAuthenticationRequest(req.getParameter("path"));
+                    authenticationService.recordNewAuthenticationRequest(
+                            req.getParameter("path"),
+                            req.getParameter("proxy.url"));
 
             resp.sendRedirect(
 
@@ -61,6 +63,9 @@ public class GitHubAuthServlet extends HttpServlet {
                 String toPath = "/token?uuid=" + state;
                 if (authenticationRequest.getRequestedPath() != null) {
                     toPath += "&path=" + URLEncoder.encode(authenticationRequest.getRequestedPath(), "UTF-8");
+                }
+                if (authenticationRequest.getProxyUrl() != null) {
+                    toPath = authenticationRequest.getProxyUrl() + toPath;
                 }
                 resp.sendRedirect(toPath);
             }
