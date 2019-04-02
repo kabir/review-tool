@@ -10,13 +10,21 @@ import {HomeComponent} from './components/home/home.component';
 import {TokenComponent} from './components/token/token.component';
 import {AuthTokenService} from './services/auth-token.service';
 import {AuthTokenInterceptor} from './interceptors/auth-token.interceptor';
+import { OrganisationComponent } from './components/organisation/organisation.component';
+import { AdminComponent } from './components/admin/admin.component';
+import { AdminHomeComponent } from './components/admin/admin-home/admin-home.component';
+import {OrganisationHomeComponent} from './components/organisation/organisation-home/organisation-home.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    TokenComponent
+    TokenComponent,
+    OrganisationComponent,
+    OrganisationHomeComponent,
+    AdminComponent,
+    AdminHomeComponent
   ],
   imports: [
     BrowserAnimationsModule,

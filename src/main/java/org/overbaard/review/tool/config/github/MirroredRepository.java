@@ -36,7 +36,6 @@ public class MirroredRepository {
     String upstreamRepository;
 
     public MirroredRepository() {
-
     }
 
     public MirroredRepository(Organisation organisation, String upstreamOrganisation, String upstreamRepository) {

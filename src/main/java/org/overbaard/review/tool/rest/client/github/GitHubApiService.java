@@ -1,7 +1,7 @@
 package org.overbaard.review.tool.rest.client.github;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -21,7 +21,7 @@ import org.overbaard.review.tool.security.github.GitHubUser;
 @RegisterProvider(GitHubApiExceptionMapper.class)
 public interface GitHubApiService {
 
-    @POST
+    @GET
     @Path("/user")
     @Produces(MediaType.APPLICATION_JSON)
     GitHubUser getUser  (

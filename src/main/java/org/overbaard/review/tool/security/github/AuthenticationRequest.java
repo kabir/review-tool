@@ -13,7 +13,8 @@ public class AuthenticationRequest {
 
     private final String proxyUrl;
 
-    private volatile String token;
+    private volatile AccessTokenResponse token;
+    private volatile String tokenType;
 
     public AuthenticationRequest(String requestedPath, String proxyUrl) {
         this.id = UUID.randomUUID();
@@ -33,11 +34,12 @@ public class AuthenticationRequest {
         return proxyUrl;
     }
 
-    public String getToken() {
+    public AccessTokenResponse getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(AccessTokenResponse token) {
         this.token = token;
     }
+
 }

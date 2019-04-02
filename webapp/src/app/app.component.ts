@@ -2,6 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {TOOLBAR_HEIGHT} from './common/view-constants';
 import {AuthTokenService} from './services/auth-token.service';
 import {ActivatedRoute} from '@angular/router';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {ToolApiService} from './services/tool-api.service';
+import {User} from './model/user';
 
 @Component({
   selector: 'app-root',
@@ -13,10 +17,11 @@ export class AppComponent implements OnInit {
 
   readonly toolbarHeight: number = TOOLBAR_HEIGHT
 
+
   constructor(
     public authTokenService: AuthTokenService,
+    private _toolApi: ToolApiService,
     private _route: ActivatedRoute) {
-
   }
 
   ngOnInit(): void {

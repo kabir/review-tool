@@ -53,7 +53,7 @@ public class AuthenticationService {
         authenticationRequests.remove(uuid);
     }
 
-    public void storeToken(String uuidString, String token) {
+    public void storeToken(String uuidString, AccessTokenResponse token) {
         UUID uuid = UUID.fromString(uuidString);
         AuthenticationRequest request = authenticationRequests.get(uuid);
         if (request == null) {
@@ -99,11 +99,13 @@ public class AuthenticationService {
             //The id in the user will be the GitHub one so clear that here and let the id generator do its job
             user.setId(null);
             entityManager.persist(user);
+            return user;
         } else {
-            //The id in the user will be the GitHub one so overwrite that with the local one
-            user.setId(storedUser.getId());
-        }
+            // Update the user fields that could be refreshed from GH
+            storedUser.setName(user.getName());
+            storedUser.setAvatarUrl(user.getAvatarUrl());
 
-        return user;
+            return storedUser;
+        }
     }
 }

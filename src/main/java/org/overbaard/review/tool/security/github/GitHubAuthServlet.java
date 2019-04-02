@@ -59,7 +59,7 @@ public class GitHubAuthServlet extends HttpServlet {
             if (token.getAccessToken() == null) {
                 resp.sendError(401, "Could not authenticate you");
             } else {
-                authenticationService.storeToken(state, token.getAccessToken());
+                authenticationService.storeToken(state, token);
                 String toPath = "/token?uuid=" + state;
                 if (authenticationRequest.getRequestedPath() != null) {
                     toPath += "&path=" + URLEncoder.encode(authenticationRequest.getRequestedPath(), "UTF-8");
@@ -92,7 +92,24 @@ public class GitHubAuthServlet extends HttpServlet {
             } else {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 resp.setCharacterEncoding("UTF-8");
-                resp.getWriter().write(Json.createObjectBuilder().add("token", authenticationRequest.getToken()).build().toString());
+                final AccessTokenResponse token = authenticationRequest.getToken();
+                final String tokenHeader = token.getTokenType() + " " + token.getAccessToken();
+
+                GitHubUser user = authenticationService.validateGitHubToken(tokenHeader);
+                user = authenticationService.exchangeApiUserForLocalUser(user);
+
+                final JsonObject json = Json.createObjectBuilder()
+                        .add("token-header", tokenHeader)
+                        .add("site-admin", user.isSiteAdmin())
+                        .add("user",
+                                Json.createObjectBuilder()
+                                        .add("login", user.getLogin())
+                                        .add("name", user.getName())
+                                        .add("avatar-url", user.getAvatarUrl())
+                                        .build())
+                        .build();
+
+                resp.getWriter().write(json.toString());
             }
         } else {
             resp.sendError(404);

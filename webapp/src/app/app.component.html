@@ -59,7 +59,10 @@
       <span class="side-drawer-logo-container"><img src="/assets/images/overbard_logotype_white_100px.svg" height="32px"></span>
       <span style="padding-left: 10px;">Review</span>
       <span class="space-filler"></span>
-      <span *ngIf=" authTokenService.loggedIn$ | async ; else notLoggedIn">
+      <span *ngIf="authTokenService.siteAdmin$| async">
+        <a [routerLink]="['/admin']" class="toolbar-link">Admin</a>
+      </span>
+      <span *ngIf=" authTokenService.loggedInUser$ | async ; else notLoggedIn">
         <a href="Log out" (click)="onLogout($event)" class="toolbar-link">Log out</a>
       </span>
       <ng-template #notLoggedIn>
@@ -68,10 +71,6 @@
     </mat-toolbar>
     <div class="inner-sidenav-content">
       <router-outlet></router-outlet>
-
-
-      <!-- Some temporary code to log in -->
-      <a (click)="onLogin($event)" href="login">Log in</a>
     </div>
   </mat-sidenav-container>
 </div>

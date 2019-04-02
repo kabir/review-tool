@@ -34,6 +34,10 @@ public class GitHubUser {
 
     private String name;
 
+    @Column(name = "site_admin")
+    private boolean siteAdmin;
+
+    @Column(name = "avatar_url")
     @JsonbProperty("avatar_url")
     private String avatarUrl;
 
@@ -77,5 +81,13 @@ public class GitHubUser {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public boolean isSiteAdmin() {
+        return siteAdmin;
+    }
+
+    public void setSiteAdmin(boolean siteAdmin) {
+        this.siteAdmin = siteAdmin;
     }
 }
