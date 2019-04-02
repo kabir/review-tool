@@ -37,9 +37,6 @@ public class AuthFilter extends HttpFilter {
     AuthenticationService authenticationService;
 
     @Inject
-    ThrowawayService testService;
-
-    @Inject
     GitHubRestClient restClient;
 
     @Inject
