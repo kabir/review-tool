@@ -1,0 +1,62 @@
+/<a [routerLink]="['/admin']">admin</a>/{{(organisation ? organisation.name : 'new')}}
+
+<h1>Organisation Info</h1>
+<div class="form-container">
+  <form [formGroup]="orgForm" (ngSubmit)="onSave()">
+    <div class="form-field">
+      <mat-form-field>
+        <mat-label>Organisation Name</mat-label>
+        <input matInput
+               name="name"
+               [required]="true"
+               formControlName="name">
+        <!--<mat-hint *ngIf="edit">GitHub organisation name</mat-hint>-->
+      </mat-form-field>
+    </div>
+    <div class="form-field">
+      <mat-form-field>
+        <mat-label>Draft PR repo Name</mat-label>
+        <input
+          matInput
+          name="org_name"
+          [required]="true"
+          formControlName="toolPrRepo">
+        <!--<mat-hint *ngIf="edit">The repo must be in the org</mat-hint>-->
+      </mat-form-field>
+    </div>
+  </form>
+  <div class="form-button-row">
+    <span class="space-filler"></span>
+    <div *ngIf="edit">
+      <a
+        (click)="onCancel($event)"
+        mat-raised-button
+        color="accent"
+      >Cancel</a>
+      <button
+        [disabled]="!canSaveOrg()"
+        type="submit"
+        mat-raised-button
+        color="primary"
+      >Save</button>
+    </div>
+    <div *ngIf="!edit">
+      <a
+        (click)="edit = true"
+        mat-raised-button
+        color="primary"
+      >Edit</a>
+    </div>
+  </div>
+</div>
+
+<h2>Mirrored Repositories</h2>
+TODO
+
+<h2>Organisation Admins</h2>
+TODO
+
+
+
+
+

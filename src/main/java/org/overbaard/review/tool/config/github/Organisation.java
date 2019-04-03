@@ -2,6 +2,7 @@ package org.overbaard.review.tool.config.github;
 
 import java.util.List;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +20,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "gh_organisation")
 @NamedQuery(name = "Organisation.findAll",
-        query = "SELECT o FROM Organisation o ORDER BY o.orgName",
+        query = "SELECT o FROM Organisation o ORDER BY o.name",
         hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
 public class Organisation {
 
@@ -32,10 +33,11 @@ public class Organisation {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ghOrganisationSequence")
     private Integer id;
 
-    @Column(name="org_name", unique = true, length = 255, nullable = false) // 255 should be long enough although GH doesn't seem to really have a limit
-    private String orgName;
+    @Column(unique = true, length = 255, nullable = false) // 255 should be long enough although GH doesn't seem to really have a limit
+    private String name;
 
-    @Column(name="tool_repo", nullable = false)
+    @JsonbProperty("tool-pr-repo")
+    @Column(name="tool_pr_repo", nullable = false)
     private String toolPrRepo;
 
     @OneToMany
@@ -44,8 +46,8 @@ public class Organisation {
     public Organisation() {
     }
 
-    public Organisation(String orgName, String reviewRepo) {
-        this.orgName = orgName;
+    public Organisation(String name, String reviewRepo) {
+        this.name = name;
         this.toolPrRepo = reviewRepo;
     }
 
@@ -57,12 +59,12 @@ public class Organisation {
         this.id = id;
     }
 
-    public String getOrgName() {
-        return orgName;
+    public String getName() {
+        return name;
     }
 
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getToolPrRepo() {

@@ -14,6 +14,9 @@ import { OrganisationComponent } from './components/organisation/organisation.co
 import { AdminComponent } from './components/admin/admin.component';
 import { AdminHomeComponent } from './components/admin/admin-home/admin-home.component';
 import {OrganisationHomeComponent} from './components/organisation/organisation-home/organisation-home.component';
+import { OrganisationInfoComponent } from './components/admin/organisation-info/organisation-info.component';
+import { OrganisationInfoViewComponent } from './components/admin/organisation-info/view/organisation-info-view.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 
 @NgModule({
@@ -24,14 +27,18 @@ import {OrganisationHomeComponent} from './components/organisation/organisation-
     OrganisationComponent,
     OrganisationHomeComponent,
     AdminComponent,
-    AdminHomeComponent
+    AdminHomeComponent,
+    OrganisationInfoComponent,
+    OrganisationInfoViewComponent
   ],
   imports: [
     BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    MaterialModule
+    MaterialModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [
     AuthTokenService,

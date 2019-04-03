@@ -66,7 +66,7 @@ public class ConfigResource {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
         }
 
-        org.setOrgName(organisation.getOrgName());
+        org.setName(organisation.getName());
         org.setToolPrRepo(organisation.getToolPrRepo());
 
         return org;

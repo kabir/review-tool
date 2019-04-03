@@ -26,26 +26,26 @@ public class ConfigEndpointTest {
                 .statusCode(200)
                 .body("size()", is(2))
                 .body("[0].id", equalTo(1))
-                .body("[0].orgName", equalTo("My Project"))
-                .body("[0].toolPrRepo", equalTo("myproject-review"))
+                .body("[0].name", equalTo("My Project"))
+                .body("[0].tool-pr-repo", equalTo("myproject-review"))
                 .body("[1].id", equalTo(2))
-                .body("[1].orgName", equalTo("Overbård"))
-                .body("[1].toolPrRepo", equalTo("overbaard-review"));
+                .body("[1].name", equalTo("Overbård"))
+                .body("[1].tool-pr-repo", equalTo("overbaard-review"));
 
         // Add an organisation
         int id = given()
                 .header(new Header("Authorization", "dummy"))
                 .contentType(ContentType.JSON)
                 .body(Json.createObjectBuilder()
-                        .add("orgName", "New One")
-                        .add("toolPrRepo", "new-review")
+                        .add("name", "New One")
+                        .add("tool-pr-repo", "new-review")
                         .build().toString())
                 .when().post("/api/config/organisations")
                 .then()
                 .statusCode(201)
                 .body("id", greaterThan(2))
-                .body("orgName", equalTo("New One"))
-                .body("toolPrRepo", equalTo("new-review"))
+                .body("name", equalTo("New One"))
+                .body("tool-pr-repo", equalTo("new-review"))
                 .extract().path("id");
 
         // Check the full list again
@@ -57,8 +57,8 @@ public class ConfigEndpointTest {
                 .body("size()", is(3))
                 .body("[0].id", equalTo(1))
                 .body("[1].id", equalTo(id))
-                .body("[1].orgName", equalTo("New One"))
-                .body("[1].toolPrRepo", equalTo("new-review"))
+                .body("[1].name", equalTo("New One"))
+                .body("[1].tool-pr-repo", equalTo("new-review"))
                 .body("[2].id", equalTo(2))
 ;
 
@@ -88,8 +88,8 @@ public class ConfigEndpointTest {
                 .then()
                 .statusCode(200)
                 .body("id", equalTo(1))
-                .body("orgName", equalTo("My Project"))
-                .body("toolPrRepo", equalTo("myproject-review"));
+                .body("name", equalTo("My Project"))
+                .body("tool-pr-repo", equalTo("myproject-review"));
 
         given()
                 .header(new Header("Authorization", "dummy"))
@@ -97,8 +97,8 @@ public class ConfigEndpointTest {
                 .then()
                 .statusCode(200)
                 .body("id", equalTo(2))
-                .body("orgName", equalTo("Overbård"))
-                .body("toolPrRepo", equalTo("overbaard-review"));
+                .body("name", equalTo("Overbård"))
+                .body("tool-pr-repo", equalTo("overbaard-review"));
 
     }
 
@@ -108,22 +108,22 @@ public class ConfigEndpointTest {
                 .header(new Header("Authorization", "dummy"))
                 .contentType(ContentType.JSON)
                 .body(Json.createObjectBuilder()
-                        .add("orgName", "Overdone")
-                        .add("toolPrRepo", "overlord")
+                        .add("name", "Overdone")
+                        .add("tool-pr-repo", "overlord")
                         .build().toString())
                 .when().put("/api/config/organisations/2")
                 .then()
                 .statusCode(200)
                 .body("id", equalTo(2))
-                .body("orgName", equalTo("Overdone"))
-                .body("toolPrRepo", equalTo("overlord"));
+                .body("name", equalTo("Overdone"))
+                .body("tool-pr-repo", equalTo("overlord"));
 
         given()
                 .header(new Header("Authorization", "dummy"))
                 .contentType(ContentType.JSON)
                 .body(Json.createObjectBuilder()
-                        .add("orgName", "Overbård")
-                        .add("toolPrRepo", "overbaard-review")
+                        .add("name", "Overbård")
+                        .add("tool-pr-repo", "overbaard-review")
                         .build().toString())
                 .when().put("/api/config/organisations/2")
                 .then()

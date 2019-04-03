@@ -1,1 +1,12 @@
 <h1>Configured Organisations</h1>
+<div *ngFor="let org of organisations$ | async">
+  <a [routerLink]="['/admin/organisation', org.id]">{{org.name}}</a>
+</div>
+<div>
+  <button mat-mini-fab (click)="onCreateOrganisation()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+
+<h1>Site Administrators</h1>
+<div>TODO</div>
