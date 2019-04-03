@@ -99,14 +99,9 @@ public class GitHubAuthServlet extends HttpServlet {
                 user = authenticationService.exchangeApiUserForLocalUser(user);
 
                 final JsonObject json = Json.createObjectBuilder()
-                        .add("token-header", tokenHeader)
-                        .add("site-admin", user.isSiteAdmin())
-                        .add("user",
-                                Json.createObjectBuilder()
-                                        .add("login", user.getLogin())
-                                        .add("name", user.getName())
-                                        .add("avatar-url", user.getAvatarUrl())
-                                        .build())
+                        .add("tokenHeader", tokenHeader)
+                        .add("siteAdmin", user.isSiteAdmin())
+                        .add("user", user.convertToJsonObject())
                         .build();
 
                 resp.getWriter().write(json.toString());

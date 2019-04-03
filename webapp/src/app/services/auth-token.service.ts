@@ -45,10 +45,7 @@ export class AuthTokenService {
       .pipe(
         take(1),
         timeout(60000),
-        catchError(err => this.handleError<TokenResponse>(returnObservable$, err)),
-        map(value => {
-          return keysToCamel(value);
-        })
+        catchError(err => this.handleError<TokenResponse>(returnObservable$, err))
       )
       .subscribe(
         (value: TokenResponse) => {

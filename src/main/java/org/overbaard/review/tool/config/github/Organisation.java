@@ -2,7 +2,6 @@ package org.overbaard.review.tool.config.github;
 
 import java.util.List;
 
-import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +35,6 @@ public class Organisation {
     @Column(unique = true, length = 255, nullable = false) // 255 should be long enough although GH doesn't seem to really have a limit
     private String name;
 
-    @JsonbProperty("tool-pr-repo")
     @Column(name="tool_pr_repo", nullable = false)
     private String toolPrRepo;
 

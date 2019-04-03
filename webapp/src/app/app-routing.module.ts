@@ -8,6 +8,7 @@ import {AdminComponent} from './components/admin/admin.component';
 import {AdminGuard} from './guards/admin.guard';
 import {AdminHomeComponent} from './components/admin/admin-home/admin-home.component';
 import {OrganisationInfoComponent} from './components/admin/organisation-info/organisation-info.component';
+import {OrganisationInfoViewComponent} from './components/admin/organisation-info/view/organisation-info-view.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: '',
         component: AdminHomeComponent
+      },
+      {
+        path: 'organisation/create',
+        component: OrganisationInfoViewComponent
       },
       {
         path: 'organisation/:orgId',

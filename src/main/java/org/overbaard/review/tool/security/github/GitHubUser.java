@@ -1,5 +1,11 @@
 package org.overbaard.review.tool.security.github;
 
+import java.io.StringReader;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +44,6 @@ public class GitHubUser {
     private boolean siteAdmin;
 
     @Column(name = "avatar_url")
-    @JsonbProperty("avatar_url")
     private String avatarUrl;
 
     public GitHubUser() {
@@ -75,10 +80,13 @@ public class GitHubUser {
         this.name = name;
     }
 
+    @JsonbProperty // Use this format when writing to our REST API
     public String getAvatarUrl() {
+        JsonbBuilder.create();
         return avatarUrl;
     }
 
+    @JsonbProperty("avatar_url") // When getting the data from GitHub it uses this format
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
@@ -89,5 +97,11 @@ public class GitHubUser {
 
     public void setSiteAdmin(boolean siteAdmin) {
         this.siteAdmin = siteAdmin;
+    }
+
+    public JsonObject convertToJsonObject() {
+        // TODO this is a bit weird
+        String jsonUser = JsonbBuilder.create(new JsonbConfig()).toJson(this);
+        return Json.createReader(new StringReader(jsonUser)).readObject();
     }
 }
