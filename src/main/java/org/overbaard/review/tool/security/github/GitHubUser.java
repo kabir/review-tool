@@ -40,6 +40,8 @@ public class GitHubUser {
 
     private String name;
 
+    private String email;
+
     @Column(name = "site_admin")
     private boolean siteAdmin;
 
@@ -49,10 +51,11 @@ public class GitHubUser {
     public GitHubUser() {
     }
 
-    public GitHubUser(Integer id, String login, String name, String avatarUrl) {
+    public GitHubUser(Integer id, String login, String name, String email, String avatarUrl) {
         this.id = id;
         this.login = login;
         this.name = name;
+        this.email = email;
         this.avatarUrl = avatarUrl;
     }
 
@@ -78,6 +81,14 @@ public class GitHubUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @JsonbProperty // Use this format when writing to our REST API

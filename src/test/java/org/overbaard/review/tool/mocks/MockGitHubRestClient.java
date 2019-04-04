@@ -20,6 +20,7 @@ public class MockGitHubRestClient extends GitHubRestClient {
                 10000,
                 "test_user",
                 "Test User",
+                "test@example.com",
                 "http://example.com/avatar/test-user.jpg");
     }
 }

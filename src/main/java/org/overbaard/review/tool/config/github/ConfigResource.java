@@ -1,7 +1,6 @@
 package org.overbaard.review.tool.config.github;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.json.bind.Jsonb;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
