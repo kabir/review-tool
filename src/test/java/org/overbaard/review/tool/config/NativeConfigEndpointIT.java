@@ -1,4 +1,4 @@
-package org.overbaard.review.tool;
+package org.overbaard.review.tool.config;
 
 import io.quarkus.test.junit.SubstrateTest;
 

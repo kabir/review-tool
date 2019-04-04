@@ -1,5 +1,6 @@
 package org.overbaard.review.tool.config.github;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -38,8 +39,8 @@ public class Organisation {
     @Column(name="tool_pr_repo", nullable = false)
     private String toolPrRepo;
 
-    @OneToMany
-    List<MirroredRepository> mirroredRepositories;
+    @OneToMany(mappedBy = "organisation")
+    List<MirroredRepository> mirroredRepositories = new ArrayList<>();
 
     public Organisation() {
     }
@@ -73,13 +74,19 @@ public class Organisation {
         this.toolPrRepo = toolPrRepo;
     }
 
-    public void addMirroredRepository(MirroredRepository mirroredRepository) {
+    void addMirroredRepository(MirroredRepository mirroredRepository) {
         mirroredRepositories.add(mirroredRepository);
         mirroredRepository.setOrganisation(this);
     }
 
-    public void removeMirroredRepository(MirroredRepository mirroredRepository) {
-        mirroredRepositories.remove(mirroredRepository);
-        mirroredRepository.setOrganisation(null);
+    void removeMirroredRepository(MirroredRepository mirroredRepository) {
+        if (mirroredRepositories.remove(mirroredRepository)) {
+            mirroredRepository.setOrganisation(null);
+        }
+    }
+
+    // Don't expose this as a property to avoid JSON-B trying to serialize it when lazy loaded
+    List<MirroredRepository> getMirroredRepositories() {
+        return mirroredRepositories;
     }
 }

@@ -12,6 +12,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -38,10 +39,15 @@ public class ConfigResource {
 
     @GET
     @Path("organisations/{id}")
-    public Organisation getOrganisation(@PathParam("id") int orgId) {
+    public Organisation getOrganisation(@PathParam("id") int orgId, @QueryParam("detail") boolean detail) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
+        }
+        if (detail) {
+            // Initialise the lazy loaded fields and wrap in a class which exposes those fields as properties
+            org.getMirroredRepositories();
+            org = new OrganisationEagerWrapper(org);
         }
         return org;
     }
@@ -84,6 +90,55 @@ public class ConfigResource {
         entityManager.remove(organisation);
 
         return Response.status(204).build();
+    }
+
+    @POST
+    @Path("organisations/{orgId}/repositories")
+    @Transactional
+    public Response addMirroredRepository(@PathParam("orgId") int orgId, MirroredRepository mirroredRepository) {
+        Organisation org = entityManager.find(Organisation.class, orgId);
+        if (org == null) {
+            throw new WebApplicationException("No organisation found with id: " + orgId, 404);
+        }
+
+        org.addMirroredRepository(mirroredRepository);
+        entityManager.persist(mirroredRepository);
+
+        return Response.status(201).build();
+    }
+
+    @PUT
+    @Path("organisations/{orgId}/repositories/{repoId}")
+    @Transactional
+    public Response updateMirroredRepository(@PathParam("orgId") int orgId, @PathParam("repoId") int repoId, MirroredRepository mirroredRepository) {
+        MirroredRepository repository = entityManager.find(MirroredRepository.class, repoId);
+        if (repository == null) {
+            throw new WebApplicationException("No mirrored repository found with id: " + repoId, 404);
+        }
+
+        repository.setUpstreamOrganisation(mirroredRepository.getUpstreamOrganisation());
+        repository.setUpstreamRepository(mirroredRepository.getUpstreamRepository());
+
+        return Response.status(201).build();
+    }
+
+    @DELETE
+    @Path("organisations/{orgId}/repositories/{repoId}")
+    @Transactional
+    public Response deleteMirroredRepository(@PathParam("orgId") int orgId, @PathParam("repoId") int repoId) {
+        MirroredRepository repository = entityManager.find(MirroredRepository.class, repoId);
+        if (repository == null) {
+            throw new WebApplicationException("No mirrored repository found with id: " + repoId, 404);
+        }
+
+        Organisation org = repository.getOrganisation();
+        if (org.getId() != orgId) {
+            throw new WebApplicationException("Repository " + repoId + " does not belong to organisation: " + orgId, 404);
+        }
+        org.removeMirroredRepository(repository);
+        repository.setOrganisation(null);
+
+        return Response.status(201).build();
     }
 
 }

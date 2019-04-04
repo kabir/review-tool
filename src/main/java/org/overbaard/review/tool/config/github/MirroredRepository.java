@@ -1,5 +1,6 @@
 package org.overbaard.review.tool.config.github;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,20 +27,20 @@ public class MirroredRepository {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ghMirroredRepositorySequence")
     private Integer id;
 
+    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gh_organisation_id")
-    Organisation organisation;
+    @JoinColumn
+    private Organisation organisation;
 
     @Column(name = "upstream_organisation", nullable = false)
-    String upstreamOrganisation;
+    private String upstreamOrganisation;
     @Column(name = "upstream_repository", nullable = false)
-    String upstreamRepository;
+    private String upstreamRepository;
 
     public MirroredRepository() {
     }
 
-    public MirroredRepository(Organisation organisation, String upstreamOrganisation, String upstreamRepository) {
-        this.organisation = organisation;
+    public MirroredRepository(String upstreamOrganisation, String upstreamRepository) {
         this.upstreamOrganisation = upstreamOrganisation;
         this.upstreamRepository = upstreamRepository;
     }
@@ -83,18 +84,13 @@ public class MirroredRepository {
 
         MirroredRepository that = (MirroredRepository) o;
 
-        if (!id.equals(that.id)) return false;
-        if (!organisation.equals(that.organisation)) return false;
-        if (!upstreamOrganisation.equals(that.upstreamOrganisation)) return false;
-        return upstreamRepository.equals(that.upstreamRepository);
+        if (id == null && that.id != null || !id.equals(that.id)) return false;
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + organisation.hashCode();
-        result = 31 * result + upstreamOrganisation.hashCode();
-        result = 31 * result + upstreamRepository.hashCode();
         return result;
     }
 }
