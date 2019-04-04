@@ -3,6 +3,8 @@ package org.overbaard.review.tool.config.github;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.overbaard.review.tool.util.LazyEntityFieldsStrategy;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -40,7 +44,7 @@ public class Organisation {
     private String toolPrRepo;
 
     @OneToMany(mappedBy = "organisation")
-    List<MirroredRepository> mirroredRepositories = new ArrayList<>();
+    private List<MirroredRepository> mirroredRepositories = new ArrayList<>();
 
     public Organisation() {
     }
@@ -85,8 +89,31 @@ public class Organisation {
         }
     }
 
-    // Don't expose this as a property to avoid JSON-B trying to serialize it when lazy loaded
+    // Don't expose this as a public property to avoid auto-JSON-B serializing when lazy loaded
     List<MirroredRepository> getMirroredRepositories() {
         return mirroredRepositories;
+    }
+
+    // Don't expose this as a public property to avoid auto-JSON-B serializing when lazy loaded
+    void setMirroredRepositories(List<MirroredRepository> mirroredRepositories) {
+        this.mirroredRepositories = mirroredRepositories;
+    }
+
+    public String toJson(boolean detail) {
+        // Take control over the serialization for paths where we choose whether to pull
+        // in the lazy loaded stuff or not
+        if (detail) {
+            // Eagerly load the lazy fields if they are wanted
+            getMirroredRepositories();
+        }
+        JsonbConfig config = new JsonbConfig()
+                .withPropertyVisibilityStrategy(
+                        new LazyEntityFieldsStrategy(detail,"mirroredRepositories"));
+
+        String s = JsonbBuilder.newBuilder()
+                .withConfig(config)
+                .build()
+                .toJson(this);
+        return s;
     }
 }

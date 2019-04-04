@@ -1,6 +1,7 @@
 package org.overbaard.review.tool.config.github;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.json.bind.Jsonb;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -39,17 +40,14 @@ public class ConfigResource {
 
     @GET
     @Path("organisations/{id}")
-    public Organisation getOrganisation(@PathParam("id") int orgId, @QueryParam("detail") boolean detail) {
+    public String getOrganisation(@PathParam("id") int orgId, @QueryParam("detail") boolean detail) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
         }
-        if (detail) {
-            // Initialise the lazy loaded fields and wrap in a class which exposes those fields as properties
-            org.getMirroredRepositories();
-            org = new OrganisationEagerWrapper(org);
-        }
-        return org;
+        // Take control over our JSON serialization to avoid errors when automatially serializing
+        // the lazy loaded fields outside of the persistence context
+        return org.toJson(detail);
     }
 
     @POST

@@ -233,6 +233,7 @@ public class ConfigEndpointTest {
                 .when().get("/api/config/organisations/2")
                 .then()
                 .statusCode(200)
+                .log().body()
                 .body("mirroredRepositories.size()", equalTo(1))
                 .body("mirroredRepositories[0].id", greaterThan(0))
                 .body("mirroredRepositories[0].upstreamOrganisation", equalTo("tmpOrg"))
