@@ -44,7 +44,6 @@
           type="submit"
           (click)="editOrg = true"
           mat-raised-button
-          [disabled]="!!canEditOrg()"
           color="primary"
         >Edit</a>
       </div>
@@ -56,8 +55,6 @@
   <mat-accordion>
     <mat-expansion-panel
       *ngFor="let repo of organisation.mirroredRepositories"
-      (opened)="onOpenRepository(repo)"
-      (closed)="onCloseRepository(repo)"
     >
       <mat-expansion-panel-header>
         {{repo.upstreamOrganisation}}/{{repo.upstreamRepository}}
@@ -65,9 +62,20 @@
       <ng-template matExpansionPanelContent>
         <app-repository-info-view
           [organisation]="organisation"
-          [repository]="activeRepository"
+          [repository]="repo"
           (modifiedRepository)="onModifiedRepository($event)"
-          ></app-repository-info-view>
+        ></app-repository-info-view>
+      </ng-template>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        +
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-repository-info-view
+          [organisation]="organisation"
+          (modifiedRepository)="onModifiedRepository($event)"
+        ></app-repository-info-view>
       </ng-template>
     </mat-expansion-panel>
   </mat-accordion>

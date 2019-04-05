@@ -32,7 +32,7 @@ export class RepositoryInfoViewComponent implements OnInit, OnChanges {
   @Output()
   modifiedRepository: EventEmitter<MirroredRepository> = new EventEmitter<MirroredRepository>();
   private create: boolean;
-  private _edit: boolean;
+  private _editRepo: boolean;
 
   constructor() {
 
@@ -55,10 +55,10 @@ export class RepositoryInfoViewComponent implements OnInit, OnChanges {
   private setUpRepositoryForm(repository: MirroredRepository) {
     if (!this.repository) {
       this.create = true;
-      this._edit = true;
+      this._editRepo = true;
     } else {
       this.create = false;
-      this._edit = false;
+      this._editRepo = false;
     }
 
     this.repoForm = new FormGroup({});
@@ -66,18 +66,18 @@ export class RepositoryInfoViewComponent implements OnInit, OnChanges {
       new FormControl(repository ? repository.upstreamOrganisation : '', Validators.required));
     this.repoForm.addControl('upstreamRepository',
       new FormControl(repository ? repository.upstreamRepository : '', Validators.required));
-    if (!this._edit) {
+    if (!this._editRepo) {
       this.repoForm.disable();
     }
   }
 
-  get edit(): boolean {
-    return this._edit;
+  get editRepo(): boolean {
+    return this._editRepo;
   }
 
-  set edit(value: boolean) {
-    this._edit = value;
-    if (!this._edit) {
+  set editRepo(value: boolean) {
+    this._editRepo = value;
+    if (!this._editRepo) {
       this.repoForm.disable();
     } else {
       this.repoForm.enable();
@@ -86,7 +86,7 @@ export class RepositoryInfoViewComponent implements OnInit, OnChanges {
 
   onCancelRepo(event: MouseEvent) {
     event.preventDefault();
-    this.edit = false;
+    this.editRepo = false;
   }
 
   canSaveRepo() {

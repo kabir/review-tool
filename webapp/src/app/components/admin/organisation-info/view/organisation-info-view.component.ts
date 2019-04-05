@@ -32,10 +32,6 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
   @Output()
   modifiedOrganisation: EventEmitter<Organisation> = new EventEmitter<Organisation>();
 
-  activeRepository: MirroredRepository;
-  repoForm: FormGroup;
-
-  private _editRepository: boolean;
 
   @Output()
   modifiedRepository: EventEmitter<MirroredRepository> = new EventEmitter<MirroredRepository>();
@@ -90,10 +86,6 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
     }
   }
 
-  canEditOrg(): boolean {
-    return !this.activeRepository;
-  }
-
   canSaveOrg(): boolean {
     return this.orgForm.dirty && this.orgForm.valid;
   }
@@ -114,35 +106,6 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
     };
 
     this.modifiedOrganisation.emit(org);
-  }
-
-  get editRepository(): boolean {
-    return this._editRepository;
-  }
-
-  set editRepository(value: boolean) {
-    this._editRepository = value;
-    if (!this._editRepository) {
-      this.repoForm.disable();
-    } else {
-      this.repoForm.enable();
-    }
-  }
-
-  onOpenRepository(repo: MirroredRepository) {
-    this.activeRepository = repo;
-    this.repoForm = new FormGroup({});
-    this.repoForm.addControl('upstreamOrganisation',
-      new FormControl(repo ? repo.upstreamOrganisation : '', Validators.required));
-    this.repoForm.addControl('upstreamRepository',
-      new FormControl(repo ? repo.upstreamRepository : '', Validators.required));
-    this.editRepository = false;
-  }
-
-  onCloseRepository(repo: MirroredRepository) {
-    if (this.activeRepository === repo) {
-      this.activeRepository = null;
-    }
   }
 
   onModifiedRepository(repo: MirroredRepository) {

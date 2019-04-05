@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="repository">
   Upstream repository
   <a href="https://github.com/{{repository.upstreamOrganisation}}/{{repository.upstreamOrganisation}}">
     {{repository.upstreamOrganisation}}/{{repository.upstreamOrganisation}}</a>
@@ -28,7 +28,7 @@
     </div>
   </div>
   <mat-action-row class="form-button-row">
-    <div *ngIf="edit">
+    <div *ngIf="editRepo">
       <a
         (click)="onCancelRepo($event)"
         mat-raised-button
@@ -41,10 +41,10 @@
         color="primary"
       >Save</button>
     </div>
-    <div *ngIf="!edit">
+    <div *ngIf="!editRepo">
       <a
         type="submit"
-        (click)="edit = true"
+        (click)="editRepo = true"
         mat-raised-button
         color="primary"
       >Edit</a>
