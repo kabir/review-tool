@@ -1,0 +1,56 @@
+<div>
+  Upstream repository
+  <a href="https://github.com/{{repository.upstreamOrganisation}}/{{repository.upstreamOrganisation}}">
+    {{repository.upstreamOrganisation}}/{{repository.upstreamOrganisation}}</a>
+  is mirrored to
+  <a href="https://github.com/{{organisation.toolPrRepo}}/{{repository.upstreamOrganisation}}">
+    {{organisation.toolPrRepo}}/{{repository.upstreamOrganisation}}</a>
+</div>
+<form [formGroup]="repoForm" (ngSubmit)="onSaveRepo()">
+  <div *ngIf="repoForm" class="form-container">
+    <div class="form-field">
+      <mat-form-field>
+        <mat-label>Upstream Organisation</mat-label>
+        <input matInput
+               name="upstreamOrganisation"
+               [required]="true"
+               formControlName="upstreamOrganisation">
+      </mat-form-field>
+    </div>
+    <div class="form-field">
+      <mat-form-field>
+        <mat-label>Upstream Repository</mat-label>
+        <input matInput
+               name="upstreamRepository"
+               [required]="true"
+               formControlName="upstreamRepository">
+      </mat-form-field>
+    </div>
+  </div>
+  <mat-action-row class="form-button-row">
+    <div *ngIf="edit">
+      <a
+        (click)="onCancelRepo($event)"
+        mat-raised-button
+        color="accent"
+      >Cancel</a>
+      <button
+        [disabled]="!canSaveRepo()"
+        type="submit"
+        mat-raised-button
+        color="primary"
+      >Save</button>
+    </div>
+    <div *ngIf="!edit">
+      <a
+        type="submit"
+        (click)="edit = true"
+        mat-raised-button
+        color="primary"
+      >Edit</a>
+    </div>
+  </mat-action-row>
+</form>
+
+
+

@@ -1,0 +1,20 @@
+@import "../../../../../styles";
+
+.form-container {
+  width: 300px;
+}
+.form-field {
+  padding: 10px;
+  width: 100%;
+}
+.form-field > * {
+  width: 100%;
+}
+.form-button-row {
+  display: flex;
+  width: 100%;
+}
+.form-button-row button,
+.form-button-row a {
+  margin-right: 8px;
+}

@@ -44,7 +44,7 @@
           type="submit"
           (click)="editOrg = true"
           mat-raised-button
-          [disabled]="!!activeRepository"
+          [disabled]="!!canEditOrg()"
           color="primary"
         >Edit</a>
       </div>
@@ -63,51 +63,11 @@
         {{repo.upstreamOrganisation}}/{{repo.upstreamRepository}}
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <form [formGroup]="repoForm" (ngSubmit)="onSaveRepo()">
-          <div *ngIf="repoForm" class="form-container">
-            <div class="form-field">
-              <mat-form-field>
-                <mat-label>Upstream Organisation</mat-label>
-                <input matInput
-                       name="upstreamOrganisation"
-                       [required]="true"
-                       formControlName="upstreamOrganisation">
-              </mat-form-field>
-            </div>
-            <div class="form-field">
-              <mat-form-field>
-                <mat-label>Upstream Repository</mat-label>
-                <input matInput
-                       name="upstreamRepository"
-                       [required]="true"
-                       formControlName="upstreamRepository">
-              </mat-form-field>
-            </div>
-          </div>
-          <mat-action-row class="form-button-row">
-            <div *ngIf="editRepository">
-              <a
-                (click)="onCancelRepo($event)"
-                mat-raised-button
-                color="accent"
-              >Cancel</a>
-              <button
-                [disabled]="!canSaveRepo()"
-                type="submit"
-                mat-raised-button
-                color="primary"
-              >Save</button>
-            </div>
-            <div *ngIf="!editRepository">
-              <a
-                type="submit"
-                (click)="editRepository = true"
-                mat-raised-button
-                color="primary"
-              >Edit</a>
-            </div>
-          </mat-action-row>
-        </form>
+        <app-repository-info-view
+          [organisation]="organisation"
+          [repository]="activeRepository"
+          (modifiedRepository)="onModifiedRepository($event)"
+          ></app-repository-info-view>
       </ng-template>
     </mat-expansion-panel>
   </mat-accordion>

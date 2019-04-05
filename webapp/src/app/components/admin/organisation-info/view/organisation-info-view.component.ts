@@ -145,25 +145,7 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
     }
   }
 
-  onCancelRepo(event: MouseEvent) {
-    event.preventDefault();
-    this.editRepository = false;
-  }
-
-  canSaveRepo() {
-    return this.repoForm.dirty && this.repoForm.valid;
-  }
-
-  onSaveRepo() {
-    event.preventDefault();
-    const id: number = this.activeRepository ? this.activeRepository.id : null;
-    const repo: MirroredRepository = {
-      id,
-      upstreamOrganisation: this.repoForm.controls['upstreamOrganisation'].value,
-      upstreamRepository: this.repoForm.controls['upstreamRepository'].value
-    };
-
+  onModifiedRepository(repo: MirroredRepository) {
     this.modifiedRepository.emit(repo);
-
   }
 }

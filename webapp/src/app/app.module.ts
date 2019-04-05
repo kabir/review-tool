@@ -18,6 +18,7 @@ import { OrganisationInfoComponent } from './components/admin/organisation-info/
 import { OrganisationInfoViewComponent } from './components/admin/organisation-info/view/organisation-info-view.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatTabsModule} from '@angular/material';
+import {RepositoryInfoViewComponent} from './components/admin/organisation-info/repository/repository-info-view.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import {MatTabsModule} from '@angular/material';
     AdminComponent,
     AdminHomeComponent,
     OrganisationInfoComponent,
-    OrganisationInfoViewComponent
+    OrganisationInfoViewComponent,
+    RepositoryInfoViewComponent
   ],
   imports: [
     BrowserAnimationsModule,
