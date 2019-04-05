@@ -1,8 +1,10 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ToolApiService} from '../../../services/tool-api.service';
 import {Organisation} from '../../../model/organisation';
-import {Observable} from 'rxjs';
-import {ActivatedRoute} from '@angular/router';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
+import {take} from 'rxjs/operators';
+import {MirroredRepository} from '../../../model/MirroredRepository';
 
 @Component({
   selector: 'app-organisation-info',
@@ -12,15 +14,56 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class OrganisationInfoComponent implements OnInit {
 
-  organisation$: Observable<Organisation>;
+  organisation$: Subject<Organisation> = new BehaviorSubject(null);
+
+  private _orgId: number;
 
   constructor(
     private _apiService: ToolApiService,
-    private _route: ActivatedRoute) { }
+    private _route: ActivatedRoute,
+    private _router: Router) { }
 
   ngOnInit() {
-    const orgName: string = this._route.snapshot.params['orgId'];
-    this.organisation$ = this._apiService.loadOrganisation(orgName);
+    this._orgId = this._route.snapshot.params['orgId'];
+    if (this._orgId) {
+      this.loadOrganisation();
+    }
   }
 
+  private loadOrganisation() {
+    this._apiService.loadOrganisation(this._orgId)
+      .pipe(
+        take(1)
+      )
+      .subscribe(
+        // TODO Handle errors
+        org => this.organisation$.next(org)
+      );
+  }
+
+  onModifiedOrganisation(org: Organisation) {
+    this._apiService.saveOrganisation(org)
+      .subscribe(
+        updatedOrg => {
+          this.organisation$.next(updatedOrg);
+          if (!org.id) {
+            this._router.navigate(['admin', 'organisation', updatedOrg.id]);
+          }
+        }
+      );
+
+  }
+
+  onModifiedRepository(repo: MirroredRepository) {
+    // _orgId will always be set for this path (we can't add/modify repos when creating an org)
+    this._apiService.saveRepository(this._orgId, repo)
+      .pipe(
+        take(1)
+      )
+      .subscribe(
+        updatedRepo => {
+          this.loadOrganisation();
+        }
+      );
+  }
 }

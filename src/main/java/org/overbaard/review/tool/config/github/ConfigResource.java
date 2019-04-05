@@ -12,7 +12,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -39,14 +38,14 @@ public class ConfigResource {
 
     @GET
     @Path("organisations/{id}")
-    public Response getOrganisation(@PathParam("id") int orgId, @QueryParam("detail") boolean detail) {
+    public Response getOrganisation(@PathParam("id") int orgId) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
         }
         // Take control over our JSON serialization to avoid errors when automatially serializing
         // the lazy loaded fields outside of the persistence context
-        return Response.ok(org.toJson(detail)).build();
+        return Response.ok(org.toJson(true)).build();
     }
 
     @POST
@@ -63,7 +62,7 @@ public class ConfigResource {
     @PUT
     @Path("organisations/{id}")
     @Transactional
-    public Organisation updateOrganisation(@PathParam("id") int orgId, Organisation organisation) {
+    public Response updateOrganisation(@PathParam("id") int orgId, Organisation organisation) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
@@ -72,7 +71,7 @@ public class ConfigResource {
         org.setName(organisation.getName());
         org.setToolPrRepo(organisation.getToolPrRepo());
 
-        return org;
+        return Response.ok(org.toJson(true)).build();
     }
 
     @DELETE

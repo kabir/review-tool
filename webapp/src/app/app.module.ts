@@ -17,6 +17,7 @@ import {OrganisationHomeComponent} from './components/organisation/organisation-
 import { OrganisationInfoComponent } from './components/admin/organisation-info/organisation-info.component';
 import { OrganisationInfoViewComponent } from './components/admin/organisation-info/view/organisation-info-view.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatTabsModule} from '@angular/material';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     HttpClientModule,
     MaterialModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    MatTabsModule
   ],
   providers: [
     AuthTokenService,

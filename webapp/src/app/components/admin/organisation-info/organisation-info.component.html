@@ -1,3 +1,5 @@
 <app-organisation-info-view
   [organisation]="organisation$ | async"
+  (modifiedOrganisation)="onModifiedOrganisation($event)"
+  (modifiedRepository)="onModifiedRepository($event)"
 ></app-organisation-info-view>

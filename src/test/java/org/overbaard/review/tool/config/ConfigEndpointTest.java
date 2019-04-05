@@ -2,7 +2,6 @@ package org.overbaard.review.tool.config;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 
@@ -77,40 +76,8 @@ public class ConfigEndpointTest {
     }
 
     @Test
-    public void testGetOrganisationNoDetail() {
-        getBaseRequest()
-                .when().get("/api/config/organisations/1")
-                .then()
-                .statusCode(200)
-                .body("id", equalTo(1))
-                .body("name", equalTo("My Project"))
-                .body("toolPrRepo", equalTo("myproject-review"))
-                .body("mirroredRepositories", nullValue());
-
-        getBaseRequest()
-                .when().get("/api/config/organisations/2")
-                .then()
-                .statusCode(200)
-                .body("id", equalTo(2))
-                .body("name", equalTo("Overbård"))
-                .body("toolPrRepo", equalTo("overbaard-review"))
-                .body("mirroredRepositories", nullValue());
-
-    }
-
-    @Test
     public void testGetOrganisationWithDetail() {
         getBaseRequest()
-                .when().get("/api/config/organisations/1")
-                .then()
-                .statusCode(200)
-                .body("id", equalTo(1))
-                .body("name", equalTo("My Project"))
-                .body("toolPrRepo", equalTo("myproject-review"))
-                .body("mirroredRepositories", nullValue());
-
-        getBaseRequest()
-                .queryParam("detail", true)
                 .when().get("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
@@ -123,27 +90,33 @@ public class ConfigEndpointTest {
                 .body("mirroredRepositories[0].upstreamRepository", equalTo("up-repoA"))
                 .body("mirroredRepositories[1].id", equalTo(2))
                 .body("mirroredRepositories[1].upstreamOrganisation", equalTo("up-orgB"))
-                .body("mirroredRepositories[1].upstreamRepository", equalTo("up-repoB"))
-        ;
-
+                .body("mirroredRepositories[1].upstreamRepository", equalTo("up-repoB"));
     }
+
     @Test
     public void testUpdateOrganisation() {
         getBaseRequest()
-                .body(toJson(new Organisation("Overdone", "overlord")))
-                .when().put("/api/config/organisations/2")
+                .body(toJson(new Organisation("Your Project", "yourproject-review")))
+                .when().put("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(2))
-                .body("name", equalTo("Overdone"))
-                .body("toolPrRepo", equalTo("overlord"));
+                .body("id", equalTo(1))
+                .body("name", equalTo("Your Project"))
+                .body("toolPrRepo", equalTo("yourproject-review"))
+                .body("mirroredRepositories.size()", equalTo(2))
+                .body("mirroredRepositories[0].id", equalTo(1))
+                .body("mirroredRepositories[0].upstreamOrganisation", equalTo("up-orgA"))
+                .body("mirroredRepositories[0].upstreamRepository", equalTo("up-repoA"))
+                .body("mirroredRepositories[1].id", equalTo(2))
+                .body("mirroredRepositories[1].upstreamOrganisation", equalTo("up-orgB"))
+                .body("mirroredRepositories[1].upstreamRepository", equalTo("up-repoB"));
 
         getBaseRequest()
                 .body(Json.createObjectBuilder()
-                        .add("name", "Overbård")
-                        .add("toolPrRepo", "overbaard-review")
+                        .add("name", "My Project")
+                        .add("toolPrRepo", "myproject-review")
                         .build().toString())
-                .when().put("/api/config/organisations/2")
+                .when().put("/api/config/organisations/1")
                 .then()
                 .statusCode(200);
     }

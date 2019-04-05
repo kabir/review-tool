@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import {catchError, map, take, takeUntil, takeWhile, timeout} from 'rxjs/operators';
+import {catchError, take, timeout} from 'rxjs/operators';
 
 import {BehaviorSubject, Observable, Subject, Subscription, throwError, timer} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {User} from '../model/user';
-import {keysToCamel} from '../common/snake-to-camel-case';
+
 const HAS_BEEN_LOGGED_IN = 'overbaard.review.tool.has-been-logged-in';
 
 @Injectable()
@@ -67,6 +67,10 @@ export class AuthTokenService {
 
 
   private initialiseAdminPolling() {
+    if (environment.proxy) {
+      // Turn this off for now
+      return;
+    }
     const subscription: Subscription = timer(0, 30000)
       .subscribe(
         value => {

@@ -24,6 +24,6 @@ export class AdminHomeComponent implements OnInit {
   }
 
   onCreateOrganisation() {
-    this._router.navigate(['admin', 'organisation', 'create']);
+    this._router.navigate(['admin', 'organisation']);
   }
 }

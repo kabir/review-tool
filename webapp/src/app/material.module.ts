@@ -17,7 +17,7 @@ import {
   MatSidenavModule,
   MatSliderModule,
   MatSlideToggleModule,
-  MatSnackBarModule,
+  MatSnackBarModule, MatTableModule,
   MatToolbarModule,
   MatTooltipModule
 } from '@angular/material';

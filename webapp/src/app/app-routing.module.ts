@@ -30,8 +30,8 @@ const routes: Routes = [
         component: AdminHomeComponent
       },
       {
-        path: 'organisation/create',
-        component: OrganisationInfoViewComponent
+        path: 'organisation',
+        component: OrganisationInfoComponent
       },
       {
         path: 'organisation/:orgId',
