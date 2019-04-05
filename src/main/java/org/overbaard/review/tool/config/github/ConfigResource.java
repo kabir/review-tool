@@ -39,14 +39,14 @@ public class ConfigResource {
 
     @GET
     @Path("organisations/{id}")
-    public String getOrganisation(@PathParam("id") int orgId, @QueryParam("detail") boolean detail) {
+    public Response getOrganisation(@PathParam("id") int orgId, @QueryParam("detail") boolean detail) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
         }
         // Take control over our JSON serialization to avoid errors when automatially serializing
         // the lazy loaded fields outside of the persistence context
-        return org.toJson(detail);
+        return Response.ok(org.toJson(detail)).build();
     }
 
     @POST
@@ -116,7 +116,7 @@ public class ConfigResource {
         repository.setUpstreamOrganisation(mirroredRepository.getUpstreamOrganisation());
         repository.setUpstreamRepository(mirroredRepository.getUpstreamRepository());
 
-        return Response.status(201).build();
+        return Response.ok(repository).build();
     }
 
     @DELETE
@@ -135,7 +135,7 @@ public class ConfigResource {
         org.removeMirroredRepository(repository);
         repository.setOrganisation(null);
 
-        return Response.status(201).build();
+        return Response.status(204).build();
     }
 
 }

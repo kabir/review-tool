@@ -183,7 +183,7 @@ public class ConfigEndpointTest {
                 .body(toJson(new MirroredRepository("TEMP-ORG", "TEMP-REPO")))
                 .when().put("/api/config/organisations/1/repositories/" + newRepoId)
                 .then()
-                .statusCode(201);
+                .statusCode(200);
 
         getBaseRequest()
                 .queryParam("detail", true)
@@ -204,7 +204,7 @@ public class ConfigEndpointTest {
         getBaseRequest()
                 .when().delete("/api/config/organisations/1/repositories/" + newRepoId)
                 .then()
-                .statusCode(201);
+                .statusCode(204);
 
         getBaseRequest()
                 .queryParam("detail", true)
@@ -244,7 +244,7 @@ public class ConfigEndpointTest {
                 .body(toJson(new MirroredRepository("TEMP-ORG", "TEMP-REPO")))
                 .when().put("/api/config/organisations/1/repositories/" + newRepoId)
                 .then()
-                .statusCode(201);
+                .statusCode(200);
 
         getBaseRequest()
                 .queryParam("detail", true)
@@ -259,7 +259,7 @@ public class ConfigEndpointTest {
         getBaseRequest()
                 .when().delete("/api/config/organisations/2/repositories/" + newRepoId)
                 .then()
-                .statusCode(201);
+                .statusCode(204);
 
         getBaseRequest()
                 .queryParam("detail", true)
