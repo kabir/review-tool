@@ -100,7 +100,7 @@ public class GitHubAuthServlet extends HttpServlet {
 
                 final JsonObject json = Json.createObjectBuilder()
                         .add("tokenHeader", tokenHeader)
-                        .add("siteAdmin", user.isSiteAdmin())
+                         .add("siteAdmin", user.getSiteAdmin() != null)
                         .add("user", user.convertToJsonObject())
                         .build();
 

@@ -12,6 +12,7 @@ import javax.json.bind.JsonbConfig;
 import org.junit.jupiter.api.Test;
 import org.overbaard.review.tool.config.github.MirroredRepository;
 import org.overbaard.review.tool.config.github.Organisation;
+import org.overbaard.review.tool.util.SimpleJsonValue;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -240,6 +241,39 @@ public class ConfigEndpointTest {
                 .then()
                 .statusCode(200)
                 .body("mirroredRepositories.size()", equalTo(0));
+    }
+
+    @Test
+    public void testSiteAdmin() {
+        getBaseRequest()
+                .when().get("/api/auth/siteAdmin/kabir")
+                .then()
+                .statusCode(200)
+                .body("value", equalTo(true));
+
+        getBaseRequest()
+                .body(toJson(new SimpleJsonValue(false)))
+                .when().put("/api/auth/siteAdmin/kabir")
+                .then()
+                .statusCode(204);
+
+        getBaseRequest()
+                .when().get("/api/auth/siteAdmin/kabir")
+                .then()
+                .statusCode(200)
+                .body("value", equalTo(false));
+
+        getBaseRequest()
+                .body(toJson(new SimpleJsonValue(true)))
+                .when().put("/api/auth/siteAdmin/kabir")
+                .then()
+                .statusCode(204);
+
+        getBaseRequest()
+                .when().get("/api/auth/siteAdmin/kabir")
+                .then()
+                .statusCode(200)
+                .body("value", equalTo(true));
     }
 
     private String toJson(Object o) {

@@ -7,12 +7,15 @@ import javax.json.JsonObject;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -42,11 +45,13 @@ public class GitHubUser {
 
     private String email;
 
-    @Column(name = "site_admin")
-    private boolean siteAdmin;
-
     @Column(name = "avatar_url")
     private String avatarUrl;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    private SiteAdmin siteAdmin;
+
+
 
     public GitHubUser() {
     }
@@ -102,11 +107,11 @@ public class GitHubUser {
         this.avatarUrl = avatarUrl;
     }
 
-    public boolean isSiteAdmin() {
+    public SiteAdmin getSiteAdmin() {
         return siteAdmin;
     }
 
-    public void setSiteAdmin(boolean siteAdmin) {
+    public void setSiteAdmin(SiteAdmin siteAdmin) {
         this.siteAdmin = siteAdmin;
     }
 

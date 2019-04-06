@@ -1,6 +1,7 @@
 package org.overbaard.review.tool.config.github;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -15,6 +16,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.overbaard.review.tool.security.github.AuthenticationService;
+
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
@@ -25,6 +28,9 @@ import javax.ws.rs.core.Response;
 public class ConfigResource {
     @PersistenceContext
     EntityManager entityManager;
+
+    @Inject
+    AuthenticationService authenticationService;
 
     private static final Organisation[] EMPTY_ORGANISATIONS = new Organisation[0];
 
@@ -136,5 +142,4 @@ public class ConfigResource {
 
         return Response.status(204).build();
     }
-
 }

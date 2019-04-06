@@ -116,7 +116,10 @@ export class AuthTokenService {
   }
 
   logIn() {
-    const path = location.href.substring(location.origin.length);
+    let path = location.href.substring(location.origin.length);
+    if (path.startsWith('/token')) {
+      path = '/';
+    }
     const encodedPath = encodeURIComponent(path);
     let href = '/auth/login?path=' + encodedPath;
     if (this._proxy) {
