@@ -11,13 +11,14 @@ import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
 public class GitHubApiExceptionMapper implements ResponseExceptionMapper<BaseClientException> {
     @Override
     public boolean handles(int status, MultivaluedMap<String, Object> headers) {
-        return status == 401;
+        return status == 401 || status == 404;
     }
 
     @Override
     public BaseClientException toThrowable(Response response) {
         switch (response.getStatus()) {
             case 401: return new NotAuthorizedException();
+            case 404: return new NotFoundException();
         }
         return null;
     }

@@ -20,11 +20,15 @@ public class GitHubRestClient {
     @RestClient
     GitHubAuthService authService;
 
-    public GitHubUser getUser(String token) throws NotAuthorizedException{
+    public GitHubUser getUser(String token) throws NotAuthorizedException {
         return apiService.getUser(token);
     }
 
-    public AccessTokenResponse getAccessToken(String clientId, String clientSecret, String code, String state) throws NotAuthorizedException{
+    public GitHubUser getUserByName(String token, String userName) throws NotAuthorizedException, NotFoundException {
+        return apiService.getUser(token, userName);
+    }
+
+    public AccessTokenResponse getAccessToken(String clientId, String clientSecret, String code, String state) throws NotAuthorizedException {
         return authService.getAccessToken(clientId, clientSecret, code, state);
     }
 }

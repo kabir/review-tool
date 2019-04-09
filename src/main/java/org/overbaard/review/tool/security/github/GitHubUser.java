@@ -7,13 +7,16 @@ import javax.json.JsonObject;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.annotation.JsonbProperty;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
@@ -25,9 +28,17 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "gh_user")
-@NamedQuery(name = "GitHubUser.findByGhLogin",
-        query = "SELECT u FROM GitHubUser u WHERE u.login = :login",
-        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
+@NamedQueries({
+        @NamedQuery(name = "GitHubUser.findByGhLogin",
+                query = "SELECT u FROM GitHubUser u WHERE u.login = :login",
+                hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")),
+        @NamedQuery(name = "GitHubUser.findAllSiteAdmins",
+                query = "SELECT u from GitHubUser u JOIN u.siteAdmin s ORDER BY u.name"
+        )
+})
+@NamedEntityGraphs(
+        @NamedEntityGraph(name = "GitHubUser.siteAdmin", attributeNodes = @NamedAttributeNode("siteAdmin"))
+)
 public class GitHubUser {
     @Id
     @SequenceGenerator(
@@ -48,7 +59,7 @@ public class GitHubUser {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private SiteAdmin siteAdmin;
 
 

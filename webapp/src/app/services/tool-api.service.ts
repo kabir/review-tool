@@ -4,6 +4,7 @@ import {take, tap, timeout} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Organisation} from '../model/organisation';
 import {MirroredRepository} from '../model/MirroredRepository';
+import {User} from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,23 @@ export class ToolApiService {
       .pipe(
         take(1),
         timeout(60000),
+      );
+  }
+
+  loadAllSiteAdmins(): Observable<User[]> {
+    return this._http.get<User[]>('/api/auth/siteAdmin', {headers})
+      .pipe(
+        take(1),
+        timeout(60000),
+        tap(v => console.log(v))
+      );
+  }
+
+  setSiteAdmin(login: string, admin: boolean): Observable<Object> {
+    return this._http.put(`/api/auth/siteAdmin/${login}`, {value: admin}, {headers})
+      .pipe(
+        take(1),
+        timeout(60000)
       );
   }
 }

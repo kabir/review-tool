@@ -3,6 +3,7 @@ package org.overbaard.review.tool.rest.client.github;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -26,4 +27,10 @@ public interface GitHubApiService {
     @Produces(MediaType.APPLICATION_JSON)
     GitHubUser getUser  (
             @HeaderParam("Authorization") String token) throws NotAuthorizedException;
+
+    @GET
+    @Path("/users/{userName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    GitHubUser getUser  (
+            @HeaderParam("Authorization") String token, @PathParam("userName") String userName) throws NotAuthorizedException, NotFoundException;
 }

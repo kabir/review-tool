@@ -1,10 +1,14 @@
 package org.overbaard.review.tool.mocks;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 
 import org.overbaard.review.tool.rest.client.github.GitHubRestClient;
+import org.overbaard.review.tool.rest.client.github.NotFoundException;
 import org.overbaard.review.tool.security.github.GitHubUser;
 
 /**
@@ -14,13 +18,23 @@ import org.overbaard.review.tool.security.github.GitHubUser;
 @Priority(1)
 @ApplicationScoped
 public class MockGitHubRestClient extends GitHubRestClient {
+    public static Map<String, GitHubUser> usersByName = new HashMap<>();
     @Override
     public GitHubUser getUser(String token) {
         return new GitHubUser(
                 10000,
                 "test_user",
-                "Test User",
+                "Mock Test User",
                 "test@example.com",
                 "http://example.com/avatar/test-user.jpg");
+    }
+
+    @Override
+    public GitHubUser getUserByName(String token, String userName) {
+        GitHubUser user =  usersByName.get(userName);
+        if (user == null) {
+            throw new NotFoundException();
+        }
+        return user;
     }
 }

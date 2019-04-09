@@ -2,6 +2,7 @@ package org.overbaard.review.tool.security.github;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
@@ -19,7 +20,7 @@ public class SiteAdmin {
     private Integer id;
 
     @JoinColumn(name = "id")
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JsonbTransient
     private GitHubUser user;

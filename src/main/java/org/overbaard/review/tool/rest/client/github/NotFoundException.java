@@ -3,8 +3,8 @@ package org.overbaard.review.tool.rest.client.github;
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
-public class NotAuthorizedException extends BaseClientException {
-    public NotAuthorizedException() {
-        super(403);
+public class NotFoundException extends BaseClientException {
+    public NotFoundException() {
+        super(404);
     }
 }

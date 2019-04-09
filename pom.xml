@@ -20,7 +20,6 @@
         <version.resources-plugin>3.1.0</version.resources-plugin>
 
         <version.checkstyle>8.18</version.checkstyle>
-
     </properties>
 
     <dependencyManagement>
