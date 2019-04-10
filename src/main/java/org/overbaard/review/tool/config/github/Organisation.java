@@ -1,10 +1,11 @@
 package org.overbaard.review.tool.config.github;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +17,8 @@ import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.overbaard.review.tool.util.LazyEntityFieldsStrategy;
+import org.overbaard.review.tool.util.entity.json.EntityJsonMaybeLazy;
+import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -27,6 +29,8 @@ import org.overbaard.review.tool.util.LazyEntityFieldsStrategy;
         query = "SELECT o FROM Organisation o ORDER BY o.name",
         hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
 public class Organisation {
+
+    private static final String MIRRORED_REPOSITORIES_FIELD = "mirroredRepositories";
 
     @Id
     @SequenceGenerator(
@@ -43,6 +47,7 @@ public class Organisation {
     @Column(name="tool_pr_repo", nullable = false)
     private String toolPrRepo;
 
+    @EntityJsonMaybeLazy
     @OneToMany(mappedBy = "organisation")
     private List<MirroredRepository> mirroredRepositories = new ArrayList<>();
 
@@ -89,31 +94,32 @@ public class Organisation {
         }
     }
 
-    // Don't expose this as a public property to avoid auto-JSON-B serializing when lazy loaded
-    List<MirroredRepository> getMirroredRepositories() {
+    public List<MirroredRepository> getMirroredRepositories() {
         return mirroredRepositories;
     }
 
-    // Don't expose this as a public property to avoid auto-JSON-B serializing when lazy loaded
-    void setMirroredRepositories(List<MirroredRepository> mirroredRepositories) {
+    public void setMirroredRepositories(List<MirroredRepository> mirroredRepositories) {
         this.mirroredRepositories = mirroredRepositories;
     }
 
-    public String toJson(boolean detail) {
-        // Take control over the serialization for paths where we choose whether to pull
-        // in the lazy loaded stuff or not
-        if (detail) {
-            // Eagerly load the lazy fields if they are wanted
-            getMirroredRepositories();
-        }
-        JsonbConfig config = new JsonbConfig()
-                .withPropertyVisibilityStrategy(
-                        new LazyEntityFieldsStrategy(detail,"mirroredRepositories"));
+    SelectiveFieldStrategyBuilder selectiveFieldStrategyBuilder() {
+        return new SelectiveFieldStrategyBuilder();
+    }
 
-        String s = JsonbBuilder.newBuilder()
-                .withConfig(config)
-                .build()
-                .toJson(this);
-        return s;
+    public static class SelectiveFieldStrategyBuilder {
+        private Map<String, Consumer<Organisation>> includedFields = new HashMap<>();
+
+        private SelectiveFieldStrategyBuilder() {
+        }
+
+        public SelectiveFieldStrategyBuilder addMirroredRepositories() {
+            this.includedFields.put(MIRRORED_REPOSITORIES_FIELD, (org) -> org.getMirroredRepositories());
+            return this;
+        }
+
+        SelectiveFieldStrategy<Organisation> build() {
+            return new SelectiveFieldStrategy(includedFields) {
+            };
+        }
     }
 }

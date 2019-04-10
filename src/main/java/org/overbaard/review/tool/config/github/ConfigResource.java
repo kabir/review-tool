@@ -17,6 +17,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.overbaard.review.tool.security.github.AuthenticationService;
+import org.overbaard.review.tool.util.entity.json.EntityJsonSerializer;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -51,7 +52,12 @@ public class ConfigResource {
         }
         // Take control over our JSON serialization to avoid errors when automatially serializing
         // the lazy loaded fields outside of the persistence context
-        return Response.ok(org.toJson(true)).build();
+        return Response.ok(EntityJsonSerializer.toJson(
+                org,
+                org.selectiveFieldStrategyBuilder()
+                        .addMirroredRepositories()
+                        .build()))
+                .build();
     }
 
     @POST
@@ -77,7 +83,12 @@ public class ConfigResource {
         org.setName(organisation.getName());
         org.setToolPrRepo(organisation.getToolPrRepo());
 
-        return Response.ok(org.toJson(true)).build();
+        return Response.ok(
+                EntityJsonSerializer.toJson(org,
+                        org.selectiveFieldStrategyBuilder()
+                        .addMirroredRepositories()
+                        .build()))
+                .build();
     }
 
     @DELETE
