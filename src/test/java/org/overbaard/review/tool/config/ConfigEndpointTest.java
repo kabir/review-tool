@@ -90,7 +90,8 @@ public class ConfigEndpointTest {
                 .body("mirroredRepositories[0].upstreamRepository", equalTo("up-repoA"))
                 .body("mirroredRepositories[1].id", equalTo(2))
                 .body("mirroredRepositories[1].upstreamOrganisation", equalTo("up-orgB"))
-                .body("mirroredRepositories[1].upstreamRepository", equalTo("up-repoB"));
+                .body("mirroredRepositories[1].upstreamRepository", equalTo("up-repoB"))
+                .body("admins.size()", equalTo(1));
     }
 
     @Test

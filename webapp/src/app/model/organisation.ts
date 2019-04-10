@@ -1,10 +1,12 @@
 import {MirroredRepository} from './MirroredRepository';
+import {User} from './user';
 
 export interface Organisation {
   id: number;
   name: string;
   toolPrRepo: string;
   mirroredRepositories: MirroredRepository[];
+  admins: User[];
 }
 
 export class OrganisationUtils {

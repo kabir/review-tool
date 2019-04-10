@@ -1,5 +1,7 @@
 package org.overbaard.review.tool.config.github;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -37,27 +39,37 @@ public class ConfigResource {
 
     @GET
     @Path("organisations")
-    public Organisation[] getOrganisations() {
-        return entityManager.createNamedQuery(Organisation.Q_FIND_ALL, Organisation.class)
-                .getResultList()
-                .toArray(EMPTY_ORGANISATIONS);
+    @Transactional
+    public Response getOrganisations() {
+        List<Organisation> organisations = entityManager.createNamedQuery(Organisation.Q_FIND_ALL, Organisation.class)
+                .getResultList();
+
+        String json =
+                EntityJsonSerializer.toJson(
+                        organisations,
+                        Organisation.selectiveFieldStrategyBuilder()
+                                .build());
+        return Response.ok(json).build();
     }
 
     @GET
     @Path("organisations/{id}")
+    @Transactional
     public Response getOrganisation(@PathParam("id") int orgId) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
         }
-        // Take control over our JSON serialization to avoid errors when automatially serializing
-        // the lazy loaded fields outside of the persistence context
-        return Response.ok(EntityJsonSerializer.toJson(
-                org,
-                org.selectiveFieldStrategyBuilder()
-                        .addMirroredRepositories()
-                        .build()))
-                .build();
+
+        String json =
+                EntityJsonSerializer.toJson(
+                        org,
+                        org.selectiveFieldStrategyBuilder()
+                                .addMirroredRepositories()
+                                .addAdmins()
+                                .build());
+        System.out.println(json);
+        return Response.ok(json).build();
     }
 
     @POST

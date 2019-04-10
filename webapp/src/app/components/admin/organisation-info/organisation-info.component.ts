@@ -5,6 +5,7 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {take} from 'rxjs/operators';
 import {MirroredRepository} from '../../../model/MirroredRepository';
+import {OrgAdminEvent, OrgAdminEventType} from './view/org-admin.event';
 
 @Component({
   selector: 'app-organisation-info',
@@ -64,6 +65,22 @@ export class OrganisationInfoComponent implements OnInit {
         updatedRepo => {
           this.loadOrganisation();
         }
+      );
+  }
+
+  onAdminEvent(event: OrgAdminEvent) {
+    let observable: Observable<object>;
+    if (event.type === OrgAdminEventType.DELETE) {
+      observable = this._apiService.deleteOrgAdmin(this._orgId, event.login);
+    } else {
+      observable = this._apiService.addOrgAdmin(this._orgId, event.login);
+    }
+    observable
+      .pipe(
+        take(1)
+      )
+      .subscribe(
+        done => this.loadOrganisation()
       );
   }
 }

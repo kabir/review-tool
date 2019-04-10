@@ -67,11 +67,28 @@ export class ToolApiService {
       );
   }
 
-  setSiteAdmin(login: string, admin: boolean): Observable<Object> {
+  setSiteAdmin(login: string, admin: boolean): Observable<object> {
     return this._http.put(`/api/auth/siteAdmin/${login}`, {value: admin}, {headers})
       .pipe(
         take(1),
         timeout(60000)
+      );
+  }
+
+
+  addOrgAdmin(orgId: number, login: string): Observable<object> {
+    return this._http.post(`/api/auth/organisation/${orgId}/admin/${login}`, {}, {headers})
+      .pipe(
+        take(1),
+        timeout(60000),
+      );
+  }
+
+  deleteOrgAdmin(orgId: number, login: string): Observable<object> {
+    return this._http.delete(`/api/auth/organisation/${orgId}/admin/${login}`, {headers})
+      .pipe(
+        take(1),
+        timeout(60000),
       );
   }
 }

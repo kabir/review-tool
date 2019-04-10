@@ -2,6 +2,7 @@ package org.overbaard.review.tool.config.github;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,8 +40,6 @@ public class Organisation {
 
     public static final String Q_FIND_ALL = "Organisation.findAll";
 
-    private static final String MIRRORED_REPOSITORIES_FIELD = "mirroredRepositories";
-
     @Id
     @SequenceGenerator(
             name = "ghOrganisationSequence",
@@ -57,7 +56,7 @@ public class Organisation {
     private String toolPrRepo;
 
     @EntityJsonMaybeLazy
-    @OneToMany(mappedBy = "organisation")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "organisation")
     private List<MirroredRepository> mirroredRepositories = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -65,8 +64,7 @@ public class Organisation {
             joinColumns = { @JoinColumn(name = "organisation_id") },
             inverseJoinColumns = { @JoinColumn(name = "gh_user_id")})
     @EntityJsonMaybeLazy
-    @JsonbTransient
-    private Set<GitHubUser> admins;
+    private Set<GitHubUser> admins = new HashSet<>();
 
 
     public Organisation() {
@@ -139,11 +137,14 @@ public class Organisation {
         gitHubUser.getAdminOfOrganisations().remove(this);
     }
 
-    SelectiveFieldStrategyBuilder selectiveFieldStrategyBuilder() {
+    static SelectiveFieldStrategyBuilder selectiveFieldStrategyBuilder() {
         return new SelectiveFieldStrategyBuilder();
     }
 
     public static class SelectiveFieldStrategyBuilder {
+        private static final String MIRRORED_REPOSITORIES_FIELD = "mirroredRepositories";
+        private static final String ADMINS = "admins";
+
         private Map<String, Consumer<Organisation>> includedFields = new HashMap<>();
 
         private SelectiveFieldStrategyBuilder() {
@@ -154,10 +155,16 @@ public class Organisation {
             return this;
         }
 
+        public SelectiveFieldStrategyBuilder addAdmins() {
+            this.includedFields.put(ADMINS, (org) -> org.getAdmins());
+            return this;
+        }
+
         SelectiveFieldStrategy<Organisation> build() {
             return new SelectiveFieldStrategy(includedFields) {
             };
         }
+
     }
 
 }

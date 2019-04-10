@@ -2,6 +2,7 @@ package org.overbaard.review.tool.security.github;
 
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -30,6 +31,7 @@ import javax.persistence.Table;
 
 import org.overbaard.review.tool.config.github.Organisation;
 import org.overbaard.review.tool.util.entity.json.EntityJsonMaybeLazy;
+import org.overbaard.review.tool.util.entity.json.EntityJsonSerializer;
 import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
 
 /**
@@ -86,7 +88,7 @@ public class GitHubUser {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "admins")
     @EntityJsonMaybeLazy
-    private Set<Organisation> adminOfOrganisations;
+    private Set<Organisation> adminOfOrganisations = new HashSet<>();
 
     public GitHubUser() {
     }
@@ -159,8 +161,7 @@ public class GitHubUser {
     }
 
     public JsonObject convertToJsonObject() {
-        // TODO this is a bit weird
-        String jsonUser = JsonbBuilder.create(new JsonbConfig()).toJson(this);
+        String jsonUser = EntityJsonSerializer.toJson(this, selectiveFieldStrategyBuilder().build());
         return Json.createReader(new StringReader(jsonUser)).readObject();
     }
 

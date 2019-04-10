@@ -12,6 +12,8 @@ import {
 import {Organisation} from '../../../../model/organisation';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MirroredRepository} from '../../../../model/MirroredRepository';
+import {User} from '../../../../model/user';
+import {OrgAdminEvent, OrgAdminEventType} from './org-admin.event';
 
 @Component({
   selector: 'app-organisation-info-view',
@@ -36,12 +38,19 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
   @Output()
   modifiedRepository: EventEmitter<MirroredRepository> = new EventEmitter<MirroredRepository>();
 
+  @Output()
+  admin: EventEmitter<OrgAdminEvent> = new EventEmitter<OrgAdminEvent>();
+
+  newAdminForm: FormGroup;
+  private _newAdminField: FormControl;
+
   constructor() {
 
   }
 
   ngOnInit() {
-    this.setUpOrgForm(this.organisation);
+    this.setupOrgForm(this.organisation);
+    this.setupAdminForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -49,7 +58,8 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
     if (orgChange) {
       if (orgChange.previousValue !== orgChange.currentValue && orgChange.currentValue) {
         const org: Organisation = orgChange.currentValue;
-        this.setUpOrgForm(org);
+        this.setupOrgForm(org);
+        this.setupAdminForm();
       }
     }
   }
@@ -67,7 +77,7 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
     }
   }
 
-  private setUpOrgForm(organisation: Organisation) {
+  private setupOrgForm(organisation: Organisation) {
     if (!this.organisation) {
       this.create = true;
       this._editOrg = true;
@@ -86,6 +96,12 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
     }
   }
 
+  private setupAdminForm() {
+    this.newAdminForm = new FormGroup({});
+    this._newAdminField = new FormControl('', Validators.required);
+    this.newAdminForm.addControl('newAdmin', this._newAdminField);
+  }
+
   canSaveOrg(): boolean {
     return this.orgForm.dirty && this.orgForm.valid;
   }
@@ -102,7 +118,8 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
       id,
       name: this.orgForm.controls['name'].value,
       toolPrRepo: this.orgForm.controls['toolPrRepo'].value,
-      mirroredRepositories: null
+      mirroredRepositories: null,
+      admins: null
     };
 
     this.modifiedOrganisation.emit(org);
@@ -110,5 +127,17 @@ export class OrganisationInfoViewComponent implements OnInit, OnChanges {
 
   onModifiedRepository(repo: MirroredRepository) {
     this.modifiedRepository.emit(repo);
+  }
+
+  onAddOrgAdmin() {
+    this.admin.emit({type: OrgAdminEventType.ADD, login: this._newAdminField.value});
+  }
+
+  onDeleteOrgAdmin(admin: User) {
+    this.admin.emit({type: OrgAdminEventType.DELETE, login: admin.login});
+  }
+
+  canSaveAdmin() {
+    return this.newAdminForm.dirty && this.newAdminForm.valid;
   }
 }

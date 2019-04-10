@@ -9,6 +9,7 @@ INSERT INTO site_admin(id) VALUES (1);
 INSERT INTO site_admin(id) VALUES (2);
 
 INSERT INTO organisation_admin(organisation_id, gh_user_id) VALUES (1, 1)
+INSERT INTO organisation_admin(organisation_id, gh_user_id) VALUES (2, 1)
 
 INSERT INTO gh_mirrored_repository(id, organisation_id, upstream_organisation, upstream_repository) VALUES (1, 1, 'up-orgA', 'up-repoA')
 INSERT INTO gh_mirrored_repository(id, organisation_id, upstream_organisation, upstream_repository) VALUES (2, 1, 'up-orgB', 'up-repoB')
