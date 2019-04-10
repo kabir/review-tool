@@ -24,7 +24,7 @@ import io.restassured.specification.RequestSpecification;
 public class AuthEndpointTest {
 
     @Test
-    public void testSiteAdmins() {
+    public void testSiteAdmin() {
         getBaseRequest()
                 .when().get("/api/auth/siteAdmin")
                 .then()
@@ -126,6 +126,53 @@ public class AuthEndpointTest {
         } finally {
             MockGitHubRestClient.usersByName.clear();
         }
+    }
+
+    @Test
+    public void testGetOrganisationAdmins() {
+        getBaseRequest()
+                .when().get("/api/auth/organisation/1/admin")
+                .then()
+                .statusCode(200)
+                .log().body()
+                .body("size()", equalTo(1))
+                .body("[0].id", equalTo(1))
+                .body("[0].login", equalTo("kabir"))
+                .body("[0].name", equalTo("Kabir Khan"))
+                .body("[0].email", equalTo("kkhan@redhat.com"));
+    }
+
+    @Test
+    public void testAddOrganisationAdmin() {
+        getBaseRequest()
+                .when().post("/api/auth/organisation/1/admin/non_admin")
+                .then()
+                .statusCode(204);
+
+        try {
+            getBaseRequest()
+                    .when().get("/api/auth/organisation/1/admin")
+                    .then()
+                    .statusCode(200)
+                    .log().body()
+                    .body("size()", equalTo(2))
+                    .body("[0].id", equalTo(1))
+                    .body("[0].login", equalTo("kabir"))
+                    .body("[0].name", equalTo("Kabir Khan"))
+                    .body("[0].email", equalTo("kkhan@redhat.com"))
+                    .body("[1].id", equalTo(3))
+                    .body("[1].login", equalTo("non_admin"))
+                    .body("[1].name", equalTo("Non Admin"))
+                    .body("[1].email", equalTo("non_admin@example.com"));
+        } finally {
+            getBaseRequest()
+                    .when().delete("/api/auth/organisation/1/admin/non_admin")
+                    .then()
+                    .statusCode(204);
+
+            testGetOrganisationAdmins();
+        }
+
     }
 
     private String toJson(Object o) {

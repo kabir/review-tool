@@ -4,19 +4,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.overbaard.review.tool.security.github.GitHubUser;
 import org.overbaard.review.tool.util.entity.json.EntityJsonMaybeLazy;
 import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
 
@@ -25,10 +32,12 @@ import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
  */
 @Entity
 @Table(name = "gh_organisation")
-@NamedQuery(name = "Organisation.findAll",
+@NamedQuery(name = Organisation.Q_FIND_ALL,
         query = "SELECT o FROM Organisation o ORDER BY o.name",
         hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
 public class Organisation {
+
+    public static final String Q_FIND_ALL = "Organisation.findAll";
 
     private static final String MIRRORED_REPOSITORIES_FIELD = "mirroredRepositories";
 
@@ -50,6 +59,15 @@ public class Organisation {
     @EntityJsonMaybeLazy
     @OneToMany(mappedBy = "organisation")
     private List<MirroredRepository> mirroredRepositories = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "organisation_admin",
+            joinColumns = { @JoinColumn(name = "organisation_id") },
+            inverseJoinColumns = { @JoinColumn(name = "gh_user_id")})
+    @EntityJsonMaybeLazy
+    @JsonbTransient
+    private Set<GitHubUser> admins;
+
 
     public Organisation() {
     }
@@ -83,6 +101,14 @@ public class Organisation {
         this.toolPrRepo = toolPrRepo;
     }
 
+    public Set<GitHubUser> getAdmins() {
+        return admins;
+    }
+
+    public void setAdmins(Set<GitHubUser> admins) {
+        this.admins = admins;
+    }
+
     void addMirroredRepository(MirroredRepository mirroredRepository) {
         mirroredRepositories.add(mirroredRepository);
         mirroredRepository.setOrganisation(this);
@@ -100,6 +126,17 @@ public class Organisation {
 
     public void setMirroredRepositories(List<MirroredRepository> mirroredRepositories) {
         this.mirroredRepositories = mirroredRepositories;
+    }
+
+    public void addAdmin(GitHubUser gitHubUser) {
+        admins.add(gitHubUser);
+        gitHubUser.getAdminOfOrganisations().add(this);
+    }
+
+
+    public void removeAdmin(GitHubUser gitHubUser) {
+        admins.remove(gitHubUser);
+        gitHubUser.getAdminOfOrganisations().remove(this);
     }
 
     SelectiveFieldStrategyBuilder selectiveFieldStrategyBuilder() {
@@ -122,4 +159,5 @@ public class Organisation {
             };
         }
     }
+
 }

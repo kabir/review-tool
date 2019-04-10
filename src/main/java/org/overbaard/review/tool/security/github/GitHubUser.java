@@ -1,6 +1,10 @@
 package org.overbaard.review.tool.security.github;
 
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -13,6 +17,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
@@ -23,23 +28,39 @@ import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.overbaard.review.tool.config.github.Organisation;
+import org.overbaard.review.tool.util.entity.json.EntityJsonMaybeLazy;
+import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
+
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
 @Entity
 @Table(name = "gh_user")
 @NamedQueries({
-        @NamedQuery(name = "GitHubUser.findByGhLogin",
+        @NamedQuery(name = GitHubUser.Q_FIND_BY_LOGIN,
                 query = "SELECT u FROM GitHubUser u WHERE u.login = :login",
                 hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")),
-        @NamedQuery(name = "GitHubUser.findAllSiteAdmins",
+        @NamedQuery(name = GitHubUser.Q_FIND_ALL_SITE_ADMINS,
                 query = "SELECT u from GitHubUser u JOIN u.siteAdmin s ORDER BY u.name"
+        ),
+        @NamedQuery(name = GitHubUser.Q_FIND_ORG_ADMINS,
+                query = "SELECT u from GitHubUser u JOIN u.adminOfOrganisations o WHERE o.id = :org_id ORDER BY u.name"
         )
 })
-@NamedEntityGraphs(
-        @NamedEntityGraph(name = "GitHubUser.siteAdmin", attributeNodes = @NamedAttributeNode("siteAdmin"))
-)
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = GitHubUser.G_SITE_ADMIN, attributeNodes = @NamedAttributeNode("siteAdmin")),
+        @NamedEntityGraph(name = GitHubUser.G_ADMIN_OF_ORGS, attributeNodes = @NamedAttributeNode("adminOfOrganisations"))
+})
 public class GitHubUser {
+
+    public static final String Q_FIND_BY_LOGIN = "GitHubUser.findByGhLogin";
+    public static final String Q_FIND_ALL_SITE_ADMINS = "GitHubUser.findAllSiteLogins";
+    public static final String Q_FIND_ORG_ADMINS = "GitHubUser.findOrgAdmins";
+
+    public static final String G_SITE_ADMIN = "GitHubUser.siteAdmin";
+    public static final String G_ADMIN_OF_ORGS = "GitHubUser.adminOfOrganisations";
+
     @Id
     @SequenceGenerator(
             name = "ghUserSequence",
@@ -60,9 +81,12 @@ public class GitHubUser {
     private String avatarUrl;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    @EntityJsonMaybeLazy
     private SiteAdmin siteAdmin;
 
-
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "admins")
+    @EntityJsonMaybeLazy
+    private Set<Organisation> adminOfOrganisations;
 
     public GitHubUser() {
     }
@@ -107,6 +131,14 @@ public class GitHubUser {
         this.email = email;
     }
 
+    public Set<Organisation> getAdminOfOrganisations() {
+        return adminOfOrganisations;
+    }
+
+    public void setAdminOfOrganisations(Set<Organisation> adminOfOrganisations) {
+        this.adminOfOrganisations = adminOfOrganisations;
+    }
+
     @JsonbProperty // Use this format when writing to our REST API
     public String getAvatarUrl() {
         JsonbBuilder.create();
@@ -130,5 +162,20 @@ public class GitHubUser {
         // TODO this is a bit weird
         String jsonUser = JsonbBuilder.create(new JsonbConfig()).toJson(this);
         return Json.createReader(new StringReader(jsonUser)).readObject();
+    }
+
+    public static SelectiveFieldStrategyBuilder selectiveFieldStrategyBuilder() {
+        return new SelectiveFieldStrategyBuilder();
+    }
+
+    public static class SelectiveFieldStrategyBuilder {
+        private Map<String, Consumer<GitHubUser>> includedFields = new HashMap<>();
+
+        private SelectiveFieldStrategyBuilder() {
+        }
+
+        public SelectiveFieldStrategy<GitHubUser> build() {
+            return new SelectiveFieldStrategy(includedFields);
+        }
     }
 }

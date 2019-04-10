@@ -89,7 +89,7 @@ public class AuthenticationService {
         }
         GitHubUser storedUser = null;
         try {
-            storedUser = entityManager.createNamedQuery("GitHubUser.findByGhLogin", GitHubUser.class)
+            storedUser = entityManager.createNamedQuery(GitHubUser.Q_FIND_BY_LOGIN, GitHubUser.class)
                     .setParameter("login", user.getLogin())
                     .getSingleResult();
         } catch (NoResultException ignore) {

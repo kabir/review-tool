@@ -38,7 +38,7 @@ public class ConfigResource {
     @GET
     @Path("organisations")
     public Organisation[] getOrganisations() {
-        return entityManager.createNamedQuery("Organisation.findAll", Organisation.class)
+        return entityManager.createNamedQuery(Organisation.Q_FIND_ALL, Organisation.class)
                 .getResultList()
                 .toArray(EMPTY_ORGANISATIONS);
     }

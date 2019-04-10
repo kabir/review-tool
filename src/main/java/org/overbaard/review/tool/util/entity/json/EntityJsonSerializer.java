@@ -2,6 +2,7 @@ package org.overbaard.review.tool.util.entity.json;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -15,10 +16,34 @@ import javax.json.bind.config.PropertyVisibilityStrategy;
  */
 public class EntityJsonSerializer {
 
+    public static <T> String toJson(List<T> list, EntityJsonFieldStrategy<T> strategy) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        boolean first = true;
+        for (T entry : list) {
+            if (!first) {
+                sb.append(",");
+            }
+            first = false;
+            sb.append(toJson(entry, strategy));
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
     public static <T> String toJson(T entity, EntityJsonFieldStrategy<T> strategy) {
-        JsonbConfig config = new JsonbConfig()
+        JsonbConfig config = createConfig(entity, strategy);
+        String s = toJson(entity, config);
+        return s;
+    }
+
+    private static <T> JsonbConfig createConfig(T entity, EntityJsonFieldStrategy<T> strategy) {
+        return new JsonbConfig()
                 .withPropertyVisibilityStrategy(
                         new LazyEntityFieldsStrategy(entity, strategy));
+    }
+
+    private static <T> String toJson(T entity, JsonbConfig config) {
         String s = JsonbBuilder.newBuilder()
                 .withConfig(config)
                 .build()
