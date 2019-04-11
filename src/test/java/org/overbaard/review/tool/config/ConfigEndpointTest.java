@@ -21,7 +21,6 @@ import io.restassured.specification.RequestSpecification;
 
 @QuarkusTest
 public class ConfigEndpointTest {
-
     @Test
     public void testListCreateDeleteOrganisations() {
         getBaseRequest()
@@ -101,6 +100,7 @@ public class ConfigEndpointTest {
                 .when().put("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
+                .log().body()
                 .body("id", equalTo(1))
                 .body("name", equalTo("Your Project"))
                 .body("toolPrRepo", equalTo("yourproject-review"))

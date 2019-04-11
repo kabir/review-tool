@@ -29,7 +29,6 @@ import org.overbaard.review.tool.security.github.GitHubCredential;
 import org.overbaard.review.tool.security.github.GitHubUser;
 import org.overbaard.review.tool.security.github.SiteAdmin;
 import org.overbaard.review.tool.util.SimpleJsonValue;
-import org.overbaard.review.tool.util.entity.json.EntityJsonSerializer;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -51,18 +50,13 @@ public class AuthResource {
     @GET
     @Path("siteAdmin")
     @Transactional
-    public Response getAllSiteAdmins() {
+    public List<GitHubUser> getAllSiteAdmins() {
         EntityGraph graph = em.getEntityGraph(GitHubUser.G_SITE_ADMIN);
         List<GitHubUser> users = em.createNamedQuery(GitHubUser.Q_FIND_ALL_SITE_ADMINS, GitHubUser.class)
                 .setHint("javax.persistence.fetchgraph", graph)
                 .getResultList();
 
-        String userList = EntityJsonSerializer.toJson(
-                users,
-                GitHubUser.selectiveFieldStrategyBuilder()
-                        .build());
-
-        return Response.ok(userList).build();
+        return users;
     }
 
     @GET
@@ -122,12 +116,7 @@ public class AuthResource {
                 .setParameter("org_id", orgId)
                 .getResultList();
 
-        String userList = EntityJsonSerializer.toJson(
-                users,
-                GitHubUser.selectiveFieldStrategyBuilder()
-                        .build());
-
-        return Response.ok(userList).build();
+        return Response.ok(users).build();
     }
 
     @POST

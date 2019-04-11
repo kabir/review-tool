@@ -1,16 +1,15 @@
 package org.overbaard.review.tool.security.github;
 
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,9 +28,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.overbaard.review.tool.config.github.Organisation;
-import org.overbaard.review.tool.util.entity.json.EntityJsonMaybeLazy;
-import org.overbaard.review.tool.util.entity.json.EntityJsonSerializer;
-import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
+import org.overbaard.review.tool.util.EntitySerializer;
+import org.overbaard.review.tool.util.MapBuilder;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -53,6 +51,7 @@ import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
         @NamedEntityGraph(name = GitHubUser.G_SITE_ADMIN, attributeNodes = @NamedAttributeNode("siteAdmin")),
         @NamedEntityGraph(name = GitHubUser.G_ADMIN_OF_ORGS, attributeNodes = @NamedAttributeNode("adminOfOrganisations"))
 })
+@JsonbTypeSerializer(GitHubUser.Serializer.class)
 public class GitHubUser {
 
     public static final String Q_FIND_BY_LOGIN = "GitHubUser.findByGhLogin";
@@ -82,11 +81,9 @@ public class GitHubUser {
     private String avatarUrl;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
-    @EntityJsonMaybeLazy
     private SiteAdmin siteAdmin;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "admins")
-    @EntityJsonMaybeLazy
     private Set<Organisation> adminOfOrganisations = new HashSet<>();
 
     public GitHubUser() {
@@ -160,22 +157,22 @@ public class GitHubUser {
     }
 
     public JsonObject convertToJsonObject() {
-        String jsonUser = EntityJsonSerializer.toJson(this, selectiveFieldStrategyBuilder().build());
+        String jsonUser = JsonbBuilder.create().toJson(this);
         return Json.createReader(new StringReader(jsonUser)).readObject();
     }
 
-    public static SelectiveFieldStrategyBuilder selectiveFieldStrategyBuilder() {
-        return new SelectiveFieldStrategyBuilder();
-    }
+    public static class Serializer extends EntitySerializer<GitHubUser> {
+        public Serializer() {
+            super(
+                    MapBuilder.<String, Function<GitHubUser, ?>>linkedHashMap()
+                            .put("id", o -> o.getId())
+                            .put("login", o -> o.getLogin())
+                            .put("name", o -> o.getName())
+                            .put("email", o -> o.getEmail())
+                            .put("avatarUrl", o -> o.getAvatarUrl())
+                            .build()
+            );
 
-    public static class SelectiveFieldStrategyBuilder {
-        private Map<String, Consumer<GitHubUser>> includedFields = new HashMap<>();
-
-        private SelectiveFieldStrategyBuilder() {
-        }
-
-        public SelectiveFieldStrategy<GitHubUser> build() {
-            return new SelectiveFieldStrategy(includedFields);
         }
     }
 }

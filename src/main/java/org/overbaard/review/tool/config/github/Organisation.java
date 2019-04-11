@@ -1,13 +1,12 @@
 package org.overbaard.review.tool.config.github;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
+import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,8 +23,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.overbaard.review.tool.security.github.GitHubUser;
-import org.overbaard.review.tool.util.entity.json.EntityJsonMaybeLazy;
-import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
+import org.overbaard.review.tool.util.EntitySerializer;
+import org.overbaard.review.tool.util.MapBuilder;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -35,6 +34,7 @@ import org.overbaard.review.tool.util.entity.json.SelectiveFieldStrategy;
 @NamedQuery(name = Organisation.Q_FIND_ALL,
         query = "SELECT o FROM Organisation o ORDER BY o.name",
         hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
+@JsonbTypeSerializer(Organisation.Serializer.class)
 public class Organisation {
 
     public static final String Q_FIND_ALL = "Organisation.findAll";
@@ -54,7 +54,6 @@ public class Organisation {
     @Column(name="tool_pr_repo", nullable = false)
     private String toolPrRepo;
 
-    @EntityJsonMaybeLazy
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "organisation")
     private List<MirroredRepository> mirroredRepositories = new ArrayList<>();
 
@@ -62,7 +61,6 @@ public class Organisation {
     @JoinTable(name = "organisation_admin",
             joinColumns = { @JoinColumn(name = "organisation_id") },
             inverseJoinColumns = { @JoinColumn(name = "gh_user_id")})
-    @EntityJsonMaybeLazy
     private Set<GitHubUser> admins = new HashSet<>();
 
 
@@ -136,34 +134,18 @@ public class Organisation {
         gitHubUser.getAdminOfOrganisations().remove(this);
     }
 
-    static SelectiveFieldStrategyBuilder selectiveFieldStrategyBuilder() {
-        return new SelectiveFieldStrategyBuilder();
+    public static class Serializer extends EntitySerializer<Organisation> {
+        public Serializer() {
+            super(
+                    MapBuilder.<String, Function<Organisation, ?>>linkedHashMap()
+                            .put("id", o -> o.getId())
+                            .put("name", o -> o.getName())
+                            .put("toolPrRepo", o -> o.getToolPrRepo())
+                            .put("mirroredRepositories", o -> o.getMirroredRepositories())
+                            .put("admins", o -> o.getAdmins())
+                            .build()
+            );
+
+        }
     }
-
-    public static class SelectiveFieldStrategyBuilder {
-        private static final String MIRRORED_REPOSITORIES_FIELD = "mirroredRepositories";
-        private static final String ADMINS = "admins";
-
-        private Map<String, Consumer<Organisation>> includedFields = new HashMap<>();
-
-        private SelectiveFieldStrategyBuilder() {
-        }
-
-        public SelectiveFieldStrategyBuilder addMirroredRepositories() {
-            this.includedFields.put(MIRRORED_REPOSITORIES_FIELD, (org) -> org.getMirroredRepositories());
-            return this;
-        }
-
-        public SelectiveFieldStrategyBuilder addAdmins() {
-            this.includedFields.put(ADMINS, (org) -> org.getAdmins());
-            return this;
-        }
-
-        SelectiveFieldStrategy<Organisation> build() {
-            return new SelectiveFieldStrategy(includedFields) {
-            };
-        }
-
-    }
-
 }

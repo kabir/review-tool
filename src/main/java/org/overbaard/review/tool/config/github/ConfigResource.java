@@ -19,7 +19,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.overbaard.review.tool.security.github.AuthenticationService;
-import org.overbaard.review.tool.util.entity.json.EntityJsonSerializer;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -40,36 +39,25 @@ public class ConfigResource {
     @GET
     @Path("organisations")
     @Transactional
-    public Response getOrganisations() {
-        List<Organisation> organisations = entityManager.createNamedQuery(Organisation.Q_FIND_ALL, Organisation.class)
+    public List<Organisation> getOrganisations() {
+        return entityManager.createNamedQuery(Organisation.Q_FIND_ALL, Organisation.class)
                 .getResultList();
-
-        String json =
-                EntityJsonSerializer.toJson(
-                        organisations,
-                        Organisation.selectiveFieldStrategyBuilder()
-                                .build());
-        return Response.ok(json).build();
     }
 
     @GET
     @Path("organisations/{id}")
     @Transactional
-    public Response getOrganisation(@PathParam("id") int orgId) {
+    public Organisation getOrganisation(@PathParam("id") int orgId) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
         }
 
-        String json =
-                EntityJsonSerializer.toJson(
-                        org,
-                        org.selectiveFieldStrategyBuilder()
-                                .addMirroredRepositories()
-                                .addAdmins()
-                                .build());
-        System.out.println(json);
-        return Response.ok(json).build();
+        // Load lazy fields
+        org.getMirroredRepositories();
+        org.getAdmins();
+
+        return org;
     }
 
     @POST
@@ -95,11 +83,10 @@ public class ConfigResource {
         org.setName(organisation.getName());
         org.setToolPrRepo(organisation.getToolPrRepo());
 
-        return Response.ok(
-                EntityJsonSerializer.toJson(org,
-                        org.selectiveFieldStrategyBuilder()
-                        .addMirroredRepositories()
-                        .build()))
+        org.getAdmins();
+        org.getMirroredRepositories();
+
+        return Response.ok(org)
                 .build();
     }
 
