@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

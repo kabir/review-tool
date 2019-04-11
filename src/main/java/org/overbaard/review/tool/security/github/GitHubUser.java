@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
