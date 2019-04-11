@@ -106,7 +106,7 @@ public class AuthResource {
     @GET
     @Path("organisation/{orgId}/admin")
     @Transactional
-    public Response getAllOrganisationAdmins(@PathParam("orgId") int orgId) {
+    public Response getAllOrganisationAdmins(@PathParam("orgId") long orgId) {
         Organisation organisation = em.find(Organisation.class, orgId);
         if (organisation == null) {
             throw new WebApplicationException("No organisation found with Id: " + orgId, 404);
@@ -122,7 +122,7 @@ public class AuthResource {
     @POST
     @Path("organisation/{orgId}/admin/{userName}")
     @Transactional
-    public void makeOrganisationAdmin(@PathParam("orgId") Integer orgId, @PathParam("userName") String userName) {
+    public void makeOrganisationAdmin(@PathParam("orgId") long orgId, @PathParam("userName") String userName) {
         GitHubUser gitHubUser = findGitHubUserOrPullFromGitHub(userName);
         checkCanUpdateOrganisationAdmins(orgId, gitHubUser);
 
@@ -137,7 +137,7 @@ public class AuthResource {
     @DELETE
     @Path("organisation/{orgId}/admin/{userName}")
     @Transactional
-    public Response deleteOrganisationAdmin(@PathParam("orgId") Integer orgId, @PathParam("userName") String userName) {
+    public Response deleteOrganisationAdmin(@PathParam("orgId") long orgId, @PathParam("userName") String userName) {
         GitHubUser gitHubUser = findGitHubUserOrPullFromGitHub(userName);
         checkCanUpdateOrganisationAdmins(orgId, gitHubUser);
 
@@ -174,7 +174,7 @@ public class AuthResource {
         return gitHubUser;
     }
 
-    private void checkCanUpdateOrganisationAdmins(int orgId, GitHubUser gitHubUser) {
+    private void checkCanUpdateOrganisationAdmins(long orgId, GitHubUser gitHubUser) {
 
         GitHubUser caller =
                 em.find(

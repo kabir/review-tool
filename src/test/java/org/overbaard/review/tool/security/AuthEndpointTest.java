@@ -96,7 +96,7 @@ public class AuthEndpointTest {
     public void testSetSiteAdminFromGitHub() {
         // Jason Greene ('n1hility') is a valid user on GitHub who is not likely to ever work on this project,
         // and so is unlikely to ever be set up by our import.sql
-        MockGitHubRestClient.usersByName.put("n1hility", new GitHubUser(99999, "n1hility", "Jason Greene", "jason@blah.com", "http://example.com/123"));
+        MockGitHubRestClient.usersByName.put("n1hility", new GitHubUser(99999L, "n1hility", "Jason Greene", "jason@blah.com", "http://example.com/123"));
         try {
             getBaseRequest()
                     .body(toJson(new SimpleJsonValue(true)))

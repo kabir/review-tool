@@ -47,7 +47,7 @@ public class Organisation {
             allocationSize = 1,
             initialValue = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ghOrganisationSequence")
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, length = 255, nullable = false) // 255 should be long enough although GH doesn't seem to really have a limit
     private String name;
@@ -76,11 +76,11 @@ public class Organisation {
         this.toolPrRepo = reviewRepo;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

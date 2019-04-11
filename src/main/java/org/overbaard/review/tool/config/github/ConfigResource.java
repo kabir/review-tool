@@ -47,7 +47,7 @@ public class ConfigResource {
     @GET
     @Path("organisations/{id}")
     @Transactional
-    public Organisation getOrganisation(@PathParam("id") int orgId) {
+    public Organisation getOrganisation(@PathParam("id") long orgId) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
@@ -74,7 +74,7 @@ public class ConfigResource {
     @PUT
     @Path("organisations/{id}")
     @Transactional
-    public Response updateOrganisation(@PathParam("id") int orgId, Organisation organisation) {
+    public Response updateOrganisation(@PathParam("id") long orgId, Organisation organisation) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
@@ -93,7 +93,7 @@ public class ConfigResource {
     @DELETE
     @Path("organisations/{id}")
     @Transactional
-    public Response deleteOrganisation(@PathParam("id") int orgId) {
+    public Response deleteOrganisation(@PathParam("id") long orgId) {
         Organisation organisation = entityManager.getReference(Organisation.class, orgId);
         if (organisation == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
@@ -107,7 +107,7 @@ public class ConfigResource {
     @POST
     @Path("organisations/{orgId}/repositories")
     @Transactional
-    public Response addMirroredRepository(@PathParam("orgId") int orgId, MirroredRepository mirroredRepository) {
+    public Response addMirroredRepository(@PathParam("orgId") long orgId, MirroredRepository mirroredRepository) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
@@ -122,7 +122,7 @@ public class ConfigResource {
     @PUT
     @Path("organisations/{orgId}/repositories/{repoId}")
     @Transactional
-    public Response updateMirroredRepository(@PathParam("orgId") int orgId, @PathParam("repoId") int repoId, MirroredRepository mirroredRepository) {
+    public Response updateMirroredRepository(@PathParam("orgId") long orgId, @PathParam("repoId") long repoId, MirroredRepository mirroredRepository) {
         MirroredRepository repository = entityManager.find(MirroredRepository.class, repoId);
         if (repository == null) {
             throw new WebApplicationException("No mirrored repository found with id: " + repoId, 404);
@@ -137,7 +137,7 @@ public class ConfigResource {
     @DELETE
     @Path("organisations/{orgId}/repositories/{repoId}")
     @Transactional
-    public Response deleteMirroredRepository(@PathParam("orgId") int orgId, @PathParam("repoId") int repoId) {
+    public Response deleteMirroredRepository(@PathParam("orgId") long orgId, @PathParam("repoId") long repoId) {
         MirroredRepository repository = entityManager.find(MirroredRepository.class, repoId);
         if (repository == null) {
             throw new WebApplicationException("No mirrored repository found with id: " + repoId, 404);

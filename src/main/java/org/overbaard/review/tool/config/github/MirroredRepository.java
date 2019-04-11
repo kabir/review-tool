@@ -31,7 +31,7 @@ public class MirroredRepository {
             allocationSize = 1,
             initialValue = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ghMirroredRepositorySequence")
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -50,11 +50,11 @@ public class MirroredRepository {
         this.upstreamRepository = upstreamRepository;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

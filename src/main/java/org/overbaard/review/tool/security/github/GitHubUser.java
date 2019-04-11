@@ -73,7 +73,7 @@ public class GitHubUser {
             allocationSize = 1,
             initialValue = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ghUserSequence")
-    private Integer id;
+    private Long id;
 
     @Column(unique = true)
     private String login;
@@ -100,7 +100,7 @@ public class GitHubUser {
     public GitHubUser() {
     }
 
-    public GitHubUser(Integer id, String login, String name, String email, String avatarUrl) {
+    public GitHubUser(Long id, String login, String name, String email, String avatarUrl) {
         this.id = id;
         this.login = login;
         this.name = name;
@@ -108,11 +108,11 @@ public class GitHubUser {
         this.avatarUrl = avatarUrl;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

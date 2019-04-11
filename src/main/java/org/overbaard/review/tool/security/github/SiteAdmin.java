@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Table(name = "site_admin")
 public class SiteAdmin {
     @Id
-    private Integer id;
+    private Long id;
 
     @JoinColumn(name = "id")
     @OneToOne(fetch = FetchType.LAZY)
@@ -25,11 +25,11 @@ public class SiteAdmin {
     @JsonbTransient
     private GitHubUser user;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

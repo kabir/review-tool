@@ -22,7 +22,7 @@ public class GitHubCredential {
         return tokenHeader;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return gitHubUser.getId();
     }
 

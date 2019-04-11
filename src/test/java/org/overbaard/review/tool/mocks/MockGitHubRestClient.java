@@ -22,7 +22,7 @@ public class MockGitHubRestClient extends GitHubRestClient {
     @Override
     public GitHubUser getUser(String token) {
         return new GitHubUser(
-                10000,
+                10000L,
                 "test_user",
                 "Mock Test User",
                 "test@example.com",
