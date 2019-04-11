@@ -1,7 +1,9 @@
 package org.overbaard.review.tool.security.github;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -22,12 +24,15 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.overbaard.review.tool.config.github.Organisation;
+import org.overbaard.review.tool.review.FeatureBranchReviewRequest;
+import org.overbaard.review.tool.review.ReviewRequest;
 import org.overbaard.review.tool.util.EntitySerializer;
 import org.overbaard.review.tool.util.MapBuilder;
 
@@ -85,6 +90,12 @@ public class GitHubUser {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "admins")
     private Set<Organisation> adminOfOrganisations = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    private List<ReviewRequest> reviewRequests = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    private List<FeatureBranchReviewRequest> featureBranchReviewRequests = new ArrayList<>();
 
     public GitHubUser() {
     }
@@ -154,6 +165,22 @@ public class GitHubUser {
 
     public void setSiteAdmin(SiteAdmin siteAdmin) {
         this.siteAdmin = siteAdmin;
+    }
+
+    public List<ReviewRequest> getReviewRequests() {
+        return reviewRequests;
+    }
+
+    public void setReviewRequests(List<ReviewRequest> reviewRequests) {
+        this.reviewRequests = reviewRequests;
+    }
+
+    public List<FeatureBranchReviewRequest> getFeatureBranchReviewRequests() {
+        return featureBranchReviewRequests;
+    }
+
+    public void setFeatureBranchReviewRequests(List<FeatureBranchReviewRequest> featureBranchReviewRequests) {
+        this.featureBranchReviewRequests = featureBranchReviewRequests;
     }
 
     public JsonObject convertToJsonObject() {

@@ -22,6 +22,7 @@ import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.overbaard.review.tool.review.ReviewRequest;
 import org.overbaard.review.tool.security.github.GitHubUser;
 import org.overbaard.review.tool.util.EntitySerializer;
 import org.overbaard.review.tool.util.MapBuilder;
@@ -62,6 +63,9 @@ public class Organisation {
             joinColumns = { @JoinColumn(name = "organisation_id") },
             inverseJoinColumns = { @JoinColumn(name = "gh_user_id")})
     private Set<GitHubUser> admins = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "organisation")
+    private List<ReviewRequest> reviewRequests = new ArrayList<>();
 
 
     public Organisation() {
@@ -145,7 +149,6 @@ public class Organisation {
                             .put("admins", o -> o.getAdmins())
                             .build()
             );
-
         }
     }
 }
