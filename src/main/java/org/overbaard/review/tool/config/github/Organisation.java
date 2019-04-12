@@ -127,6 +127,14 @@ public class Organisation {
         this.mirroredRepositories = mirroredRepositories;
     }
 
+    public List<ReviewRequest> getReviewRequests() {
+        return reviewRequests;
+    }
+
+    public void setReviewRequests(List<ReviewRequest> reviewRequests) {
+        this.reviewRequests = reviewRequests;
+    }
+
     public void addAdmin(GitHubUser gitHubUser) {
         admins.add(gitHubUser);
         gitHubUser.getAdminOfOrganisations().add(this);
@@ -136,6 +144,11 @@ public class Organisation {
     public void removeAdmin(GitHubUser gitHubUser) {
         admins.remove(gitHubUser);
         gitHubUser.getAdminOfOrganisations().remove(this);
+    }
+
+    public void addReviewRequest(ReviewRequest reviewRequest) {
+        reviewRequests.add(reviewRequest);
+        reviewRequest.setOrganisation(this);
     }
 
     public static class Serializer extends EntitySerializer<Organisation> {

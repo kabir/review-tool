@@ -131,7 +131,6 @@ public class ConfigEndpointTest {
                 .statusCode(201);
 
         int newRepoId = getBaseRequest()
-                .queryParam("detail", true)
                 .when().get("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
@@ -154,7 +153,6 @@ public class ConfigEndpointTest {
                 .statusCode(200);
 
         getBaseRequest()
-                .queryParam("detail", true)
                 .when().get("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
@@ -175,7 +173,6 @@ public class ConfigEndpointTest {
                 .statusCode(204);
 
         getBaseRequest()
-                .queryParam("detail", true)
                 .when().get("/api/config/organisations/1")
                 .then()
                 .statusCode(200)
@@ -197,7 +194,6 @@ public class ConfigEndpointTest {
                 .statusCode(201);
 
         int newRepoId = getBaseRequest()
-                .queryParam("detail", true)
                 .when().get("/api/config/organisations/2")
                 .then()
                 .statusCode(200)
@@ -215,7 +211,6 @@ public class ConfigEndpointTest {
                 .statusCode(200);
 
         getBaseRequest()
-                .queryParam("detail", true)
                 .when().get("/api/config/organisations/2")
                 .then()
                 .statusCode(200)
@@ -230,7 +225,6 @@ public class ConfigEndpointTest {
                 .statusCode(204);
 
         getBaseRequest()
-                .queryParam("detail", true)
                 .when().get("/api/config/organisations/2")
                 .then()
                 .statusCode(200)

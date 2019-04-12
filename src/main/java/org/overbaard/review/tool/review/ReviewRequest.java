@@ -2,7 +2,10 @@ package org.overbaard.review.tool.review;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
+import javax.json.bind.annotation.JsonbTypeSerializer;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,19 +15,46 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.overbaard.review.tool.config.github.Organisation;
 import org.overbaard.review.tool.security.github.GitHubUser;
+import org.overbaard.review.tool.util.EntitySerializer;
+import org.overbaard.review.tool.util.MapBuilder;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
 @Entity
 @Table(name = "review_request")
+@NamedQueries({
+        @NamedQuery(name = ReviewRequest.Q_FIND_ALL,
+                query = "SELECT r FROM ReviewRequest r JOIN FETCH r.owner",
+                hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")),
+        @NamedQuery(name = ReviewRequest.Q_FIND_FOR_ORG,
+                query = "SELECT r FROM ReviewRequest r JOIN r.organisation o WHERE o.id = :orgId",
+                hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
+})
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = ReviewRequest.G_OWNER, attributeNodes = @NamedAttributeNode("owner"))
+})
+@JsonbTypeSerializer(ReviewRequest.Serializer.class)
 public class ReviewRequest {
+
+    public static final String Q_FIND_ALL = "ReviewRequest.findAll";
+    public static final String Q_FIND_FOR_ORG = "ReviewRequest.findForOrg";
+
+    public static final String G_OWNER = "ReviewRequest.owner";
+
     @Id
     @SequenceGenerator(
             name = "reviewRequestSequence",
@@ -49,13 +79,29 @@ public class ReviewRequest {
     @Column(nullable = false)
     private String title;
 
+    @Column(name = "issue_tracker_link", nullable = false)
+    private String issueTrackerLink;
+
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Basic(fetch = FetchType.LAZY)
     @Column(nullable = false)
     private String description;
 
     // TODO publishedStatus (draft, published, ...)
     // TODO reviewStatus (pending, approved, ...)
     // TODO CI information and status (probably a separate table to take into account different CI systems)
+
+
+    public ReviewRequest() {
+
+    }
+
+    public ReviewRequest(String title, String issueTrackerLink, String description) {
+        this.title = title;
+        this.issueTrackerLink = issueTrackerLink;
+        this.description = description;
+    }
 
     public Long getId() {
         return id;
@@ -97,11 +143,36 @@ public class ReviewRequest {
         this.description = description;
     }
 
+    public String getIssueTrackerLink() {
+        return issueTrackerLink;
+    }
+
+    public void setIssueTrackerLink(String issueTrackerLink) {
+        this.issueTrackerLink = issueTrackerLink;
+    }
+
     public List<FeatureBranchReviewRequest> getFeatureBranchReviewRequests() {
         return featureBranchReviewRequests;
     }
 
     public void setFeatureBranchReviewRequests(List<FeatureBranchReviewRequest> featureBranchReviewRequests) {
         this.featureBranchReviewRequests = featureBranchReviewRequests;
+    }
+
+    public static class Serializer extends EntitySerializer<ReviewRequest> {
+        public Serializer() {
+            super(
+                    MapBuilder.<String, Function<ReviewRequest, ?>>linkedHashMap()
+                            .put("id", o -> o.getId())
+                            .put("owner", o -> o.getOwner())
+                            .put("organisation", o -> o.getOrganisation())
+                            .put("title", o -> o.getTitle())
+                            .put("description", o -> o.getDescription())
+                            .put("issueTrackerLink", o -> o.getIssueTrackerLink())
+                            .put("featureBranchReviewRequests", o -> o.getFeatureBranchReviewRequests())
+                            .build()
+            );
+
+        }
     }
 }

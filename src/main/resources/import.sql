@@ -13,3 +13,6 @@ INSERT INTO organisation_admin(organisation_id, gh_user_id) VALUES (2, 1)
 
 INSERT INTO gh_mirrored_repository(id, organisation_id, upstream_organisation, upstream_repository) VALUES (1, 1, 'up-orgA', 'up-repoA')
 INSERT INTO gh_mirrored_repository(id, organisation_id, upstream_organisation, upstream_repository) VALUES (2, 1, 'up-orgB', 'up-repoB')
+
+INSERT INTO review_request(id, title, description, issue_tracker_link, organisation_id, owner_id) VALUES (1, 'First one', 'Blah Blah', 'https://example.com/100', 1, 3)
+INSERT INTO review_request(id, title, description, issue_tracker_link, organisation_id, owner_id) VALUES (2, 'Second one', 'Blabla', 'https://example.com/101', 2, 2)

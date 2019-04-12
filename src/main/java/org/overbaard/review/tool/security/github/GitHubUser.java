@@ -183,6 +183,11 @@ public class GitHubUser {
         this.featureBranchReviewRequests = featureBranchReviewRequests;
     }
 
+    public void addReviewRequest(ReviewRequest reviewRequest) {
+        reviewRequests.add(reviewRequest);
+        reviewRequest.setOwner(this);
+    }
+
     public JsonObject convertToJsonObject() {
         String jsonUser = JsonbBuilder.create().toJson(this);
         return Json.createReader(new StringReader(jsonUser)).readObject();

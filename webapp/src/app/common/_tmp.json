@@ -1,0 +1,96 @@
+{
+  "name": "Integration",
+  "code": "RHMWINT",
+  "states": [
+  {
+    "name": "Open",
+    "backlog": true
+  },
+  {
+    "name": "Reopened",
+    "backlog": true
+  },
+  {
+    "name": "Coding In Progress"
+  },
+  {
+    "name": "Resolved"
+  },
+  {
+    "name": "Closed"
+  }
+],
+  "priorities": [
+  {
+    "name": "Blocker",
+    "colour": "red"
+  },
+  {
+    "name": "Critical",
+    "colour": "#f66"
+  },
+  {
+    "name": "Major",
+    "colour": "orange"
+  },
+  {
+    "name": "Minor",
+    "colour": "yellow"
+  },
+    {
+      "name": "Minor",
+      "colour": "yellowgreen"
+    }
+  ,
+    {
+      "name": "Minor",
+      "colour": "lightgreen"
+    }
+],
+  "issue-types": [
+    {
+      "name": "Bug",
+      "colour": "red"
+    },
+    {
+      "name": "Clarification",
+      "colour": "pink"
+    },
+    {
+      "name": "Documentation",
+      "colour": "pink"
+    },
+  {
+    "name": "Enhancement",
+    "colour": "#1d689c"
+  },
+  {
+    "name": "Feature Request",
+    "colour": "orange"
+  },
+  {
+    "name": "Task",
+    "colour": "greenyellow"
+  },
+  {
+    "name": "Sub-task",
+    "colour": "yellowgreen"
+  }
+],
+  "projects": [
+  {
+    "code": "RHMWINT",
+    "query-filter": "issuetype != Epic",
+    "colour": "#1d689c",
+    "state-links": {
+      "Open": "Open",
+      "Reopened":"Reopened",
+      "Coding In Progress": "Coding In Progress",
+      "Resolved": "Resolved",
+      "Closed": "Closed"
+    },
+    "enable"
+  }
+],
+  "linked-projects": {}
+}

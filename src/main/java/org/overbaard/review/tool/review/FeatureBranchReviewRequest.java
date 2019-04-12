@@ -1,5 +1,8 @@
 package org.overbaard.review.tool.review;
 
+import java.util.function.Function;
+
+import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,12 +17,15 @@ import javax.persistence.Table;
 
 import org.overbaard.review.tool.config.github.MirroredRepository;
 import org.overbaard.review.tool.security.github.GitHubUser;
+import org.overbaard.review.tool.util.EntitySerializer;
+import org.overbaard.review.tool.util.MapBuilder;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
 @Entity
 @Table(name = "feature_branch_review_request")
+@JsonbTypeSerializer(FeatureBranchReviewRequest.Serializer.class)
 public class FeatureBranchReviewRequest {
     @Id
     @SequenceGenerator(
@@ -32,7 +38,10 @@ public class FeatureBranchReviewRequest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    private GitHubUser owner; // This is essentially the github user of where the feature branch lives
+    // This is essentially the github user of where the feature branch lives
+    // TODO a team might be working on an organisation repository too (e.g. an incubator) so it is not necessarily a user
+    // In that case we would need to ask for the owner differently, and reco
+    private GitHubUser owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_request_id", nullable = false)
@@ -117,5 +126,25 @@ public class FeatureBranchReviewRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+
+    public static class Serializer extends EntitySerializer<FeatureBranchReviewRequest> {
+        public Serializer() {
+            super(
+                    MapBuilder.<String, Function<FeatureBranchReviewRequest, ?>>linkedHashMap()
+                            .put("id", o -> o.getId())
+                            .put("owner", o -> o.getOwner())
+                            .put("reviewRequest", o -> o.getReviewRequest())
+                            .put("title", o -> o.getTitle())
+                            .put("description", o -> o.getDescription())
+                            .put("mirroredRepository", o -> o.getMirroredRepository())
+                            .put("featureBranch", o -> o.getFeatureBranch())
+                            .put("targetBranch", o -> o.getTargetBranch())
+
+                            .build()
+            );
+
+        }
     }
 }
