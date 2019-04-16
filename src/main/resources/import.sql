@@ -16,3 +16,5 @@ INSERT INTO gh_mirrored_repository(id, organisation_id, upstream_organisation, u
 
 INSERT INTO review_request(id, title, description, issue_tracker_link, organisation_id, owner_id) VALUES (1, 'First one', 'Blah Blah', 'https://example.com/100', 1, 3)
 INSERT INTO review_request(id, title, description, issue_tracker_link, organisation_id, owner_id) VALUES (2, 'Second one', 'Blabla', 'https://example.com/101', 2, 2)
+
+INSERT INTO feature_branch_request(id, owner_id, review_request_id, mirrored_repository_id, feature_branch, target_branch, title) VALUES (1, 1, 2, 2, 'my-branch', 'master', 'Sample Branch Review')

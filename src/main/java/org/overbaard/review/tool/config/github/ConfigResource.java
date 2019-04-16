@@ -1,6 +1,7 @@
 package org.overbaard.review.tool.config.github;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -39,25 +40,24 @@ public class ConfigResource {
     @GET
     @Path("organisations")
     @Transactional
-    public List<Organisation> getOrganisations() {
+    public List<OrganisationDto> getOrganisations() {
         return entityManager.createNamedQuery(Organisation.Q_FIND_ALL, Organisation.class)
-                .getResultList();
+                .getResultList()
+                .stream()
+                .map(o -> OrganisationDto.summary(o))
+                .collect(Collectors.toList());
     }
 
     @GET
     @Path("organisations/{id}")
     @Transactional
-    public Organisation getOrganisation(@PathParam("id") long orgId) {
+    public OrganisationDto getOrganisation(@PathParam("id") long orgId) {
         Organisation org = entityManager.find(Organisation.class, orgId);
         if (org == null) {
             throw new WebApplicationException("No organisation found with id: " + orgId, 404);
         }
 
-        // Load lazy fields
-        org.getMirroredRepositories();
-        org.getAdmins();
-
-        return org;
+        return OrganisationDto.detail(org);
     }
 
     @POST
@@ -68,7 +68,9 @@ public class ConfigResource {
             throw new WebApplicationException("Id was invalidly set on request.", 422);
         }
         entityManager.persist(organisation);
-        return Response.ok(organisation).status(201).build();
+        OrganisationDto dto =
+                OrganisationDto.detail(organisation);
+        return Response.ok(dto).status(201).build();
     }
 
     @PUT
@@ -83,11 +85,10 @@ public class ConfigResource {
         org.setName(organisation.getName());
         org.setToolPrRepo(organisation.getToolPrRepo());
 
-        org.getAdmins();
-        org.getMirroredRepositories();
+        OrganisationDto dto =
+                OrganisationDto.detail(org);
 
-        return Response.ok(org)
-                .build();
+        return Response.ok(dto).build();
     }
 
     @DELETE
@@ -131,7 +132,9 @@ public class ConfigResource {
         repository.setUpstreamOrganisation(mirroredRepository.getUpstreamOrganisation());
         repository.setUpstreamRepository(mirroredRepository.getUpstreamRepository());
 
-        return Response.ok(repository).build();
+        MirroredRepositoryDto dto = MirroredRepositoryDto.summary(repository);
+
+        return Response.ok(dto).build();
     }
 
     @DELETE

@@ -1,5 +1,6 @@
 package org.overbaard.review.tool.security;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.overbaard.review.tool.config.github.Organisation;
 import org.overbaard.review.tool.rest.client.github.GitHubRestClient;
 import org.overbaard.review.tool.security.github.GitHubCredential;
 import org.overbaard.review.tool.security.github.GitHubUser;
+import org.overbaard.review.tool.security.github.GitHubUserDto;
 import org.overbaard.review.tool.security.github.SiteAdmin;
 import org.overbaard.review.tool.util.SimpleJsonValue;
 
@@ -50,13 +52,16 @@ public class AuthResource {
     @GET
     @Path("siteAdmin")
     @Transactional
-    public List<GitHubUser> getAllSiteAdmins() {
+    public List<GitHubUserDto> getAllSiteAdmins() {
         EntityGraph graph = em.getEntityGraph(GitHubUser.G_SITE_ADMIN);
         List<GitHubUser> users = em.createNamedQuery(GitHubUser.Q_FIND_ALL_SITE_ADMINS, GitHubUser.class)
                 .setHint("javax.persistence.fetchgraph", graph)
                 .getResultList();
-
-        return users;
+        List<GitHubUserDto> dtos = new ArrayList<>();
+        for (GitHubUser user : users) {
+            dtos.add(GitHubUserDto.summary(user));
+        }
+        return dtos;
     }
 
     @GET
@@ -115,6 +120,10 @@ public class AuthResource {
         List<GitHubUser> users = em.createNamedQuery(GitHubUser.Q_FIND_ORG_ADMINS, GitHubUser.class)
                 .setParameter("org_id", orgId)
                 .getResultList();
+        List<GitHubUserDto> dtos = new ArrayList<>();
+        for (GitHubUser user : users) {
+            dtos.add(GitHubUserDto.summary(user));
+        }
 
         return Response.ok(users).build();
     }

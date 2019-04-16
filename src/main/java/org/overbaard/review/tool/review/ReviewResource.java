@@ -1,5 +1,6 @@
 package org.overbaard.review.tool.review;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -38,45 +39,39 @@ public class ReviewResource {
 
     @GET
     @Transactional
-    public List<ReviewRequest> getAllReviews(@PathParam("orgId") Long orgId) {
+    public List<ReviewRequestDto> getAllReviews(@PathParam("orgId") Long orgId) {
         List<ReviewRequest> reviewRequests = em.createNamedQuery(ReviewRequest.Q_FIND_ALL, ReviewRequest.class)
                 .setHint("javax.persistence.fetchgraph", ReviewRequest.G_OWNER)
                 .getResultList();
-        //TODO - this pulls in the user and org anyway despite my efforts. We only really want to serialize the owner (also the query/hints should be optimised)
-        reviewRequests.forEach(r -> {
-            r.getOwner();
-        });
-        return reviewRequests;
+        //TODO - The query/hints should be optimised for this use case
+        List<ReviewRequestDto> dtos = new ArrayList<>();
+        reviewRequests.forEach(r -> dtos.add(ReviewRequestDto.summary(r)));
+        return dtos;
     }
 
     @GET
     @Path("organisation/{orgId}")
     @Transactional
-    public List<ReviewRequest> getReviewRequestsForOrg(@PathParam("orgId") Long orgId) {
+    public List<ReviewRequestDto> getReviewRequestsForOrg(@PathParam("orgId") Long orgId) {
         List<ReviewRequest> reviewRequests = em.createNamedQuery(ReviewRequest.Q_FIND_FOR_ORG, ReviewRequest.class)
                 .setHint("javax.persistence.fetchgraph", ReviewRequest.G_OWNER)
                 .setParameter("orgId", orgId)
                 .getResultList();
-        //TODO - this pulls in the user and org anyway despite my efforts. We only really want to serialize the owner (also the query/hints should be optimised)
-        reviewRequests.forEach(r -> {
-            r.getOwner();
-        });
-        return reviewRequests;
+        //TODO - The query/hints should be optimised for this use case
+        List<ReviewRequestDto> dtos = new ArrayList<>();
+        reviewRequests.forEach(r -> dtos.add(ReviewRequestDto.summary(r)));
+        return dtos;
     }
 
     @GET
     @Path("{reviewId}")
     @Transactional
-    public ReviewRequest getReviewRequestDetail(@PathParam("reviewId") Long reviewId) {
+    public ReviewRequestDto getReviewRequestDetail(@PathParam("reviewId") Long reviewId) {
         ReviewRequest reviewRequest = em.find(ReviewRequest.class, reviewId);
+        // TODO optimise query/eager loading
 
-        // TODO revisit serialization and how to eager load this more optimally
-        // Load lazy fields needed
-        reviewRequest.getDescription();
-        reviewRequest.getFeatureBranchReviewRequests();
-        reviewRequest.getOwner();
-
-        return reviewRequest;
+        ReviewRequestDto dto = ReviewRequestDto.detail(reviewRequest);
+        return dto;
     }
 
     @POST
@@ -86,13 +81,13 @@ public class ReviewResource {
         GitHubUser owner = em.find(GitHubUser.class, gitHubCredential.getId());
         Organisation org = em.find(Organisation.class, orgId);
 
-        owner.getReviewRequests();
         owner.addReviewRequest(reviewRequest);
         org.addReviewRequest(reviewRequest);
         em.persist(reviewRequest);
 
+        ReviewRequestDto dto = ReviewRequestDto.detail(reviewRequest);
 
-        return Response.ok(reviewRequest).status(201).build();
+        return Response.ok(dto).status(201).build();
     }
 
     @PUT
@@ -118,10 +113,10 @@ public class ReviewResource {
     }
 
     @POST
-    @Path("organisation/{orgId}/review/{reviewId}/branch")
+    @Path("review/{reviewId}/branch")
     @Transactional
     public Response addReviewRequestFeatureBranch(
-            @PathParam("orgId") Long orgId, @PathParam("reviewId") Long reviewId, FeatureBranchReviewRequest branchReviewRequest) {
+            @PathParam("orgId") Long orgId, @PathParam("reviewId") Long reviewId, FeatureBranchRequest branchReviewRequest) {
         return Response.status(201).build();
     }
 
@@ -138,7 +133,7 @@ public class ReviewResource {
     @Transactional
     public Response updateReviewRequestFeatureBranch(
             @PathParam("orgId") Long orgId, @PathParam("reviewId") Long reviewId,
-            @PathParam("branchId") Long branchId, FeatureBranchReviewRequest branchReviewRequest) {
+            @PathParam("branchId") Long branchId, FeatureBranchRequest branchReviewRequest) {
         return Response.status(204).build();
     }
 

@@ -3,13 +3,11 @@ package org.overbaard.review.tool.review;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.nullValue;
 
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -89,6 +87,7 @@ public class ReviewEndpointTest {
                 .when().get("/api/review/2")
                 .then()
                 .statusCode(200)
+                .log().body()
                 .body("id", equalTo(2))
                 .body("title", equalTo("Second one"))
                 .body("description", equalTo("Blabla"))

@@ -30,10 +30,8 @@ public class ConfigEndpointTest {
                 .body("size()", is(2))
                 .body("[0].id", equalTo(1))
                 .body("[0].name", equalTo("My Project"))
-                .body("[0].toolPrRepo", equalTo("myproject-review"))
                 .body("[1].id", equalTo(2))
-                .body("[1].name", equalTo("Overbård"))
-                .body("[1].toolPrRepo", equalTo("overbaard-review"));
+                .body("[1].name", equalTo("Overbård"));
 
         // Add an organisation
         int id = getBaseRequest()
@@ -55,7 +53,6 @@ public class ConfigEndpointTest {
                 .body("[0].id", equalTo(1))
                 .body("[1].id", equalTo(id))
                 .body("[1].name", equalTo("New One"))
-                .body("[1].toolPrRepo", equalTo("new-review"))
                 .body("[2].id", equalTo(2));
 
         // Delete the added org

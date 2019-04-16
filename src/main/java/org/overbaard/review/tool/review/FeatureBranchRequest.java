@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.overbaard.review.tool.config.github.MirroredRepository;
 import org.overbaard.review.tool.security.github.GitHubUser;
 import org.overbaard.review.tool.util.EntitySerializer;
@@ -24,9 +25,9 @@ import org.overbaard.review.tool.util.MapBuilder;
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
  */
 @Entity
-@Table(name = "feature_branch_review_request")
-@JsonbTypeSerializer(FeatureBranchReviewRequest.Serializer.class)
-public class FeatureBranchReviewRequest {
+@Table(name = "feature_branch_request")
+@JsonbTypeSerializer(FeatureBranchRequest.Serializer.class)
+public class FeatureBranchRequest {
     @Id
     @SequenceGenerator(
             name = "featureBranchReviewRequestSequence",
@@ -61,8 +62,21 @@ public class FeatureBranchReviewRequest {
     private String title;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(nullable = false)
     private String description;
+
+    public FeatureBranchRequest() {
+    }
+
+    public FeatureBranchRequest(Long id, GitHubUser owner, MirroredRepository mirroredRepository, String featureBranch, String targetBranch, String title) {
+        this.id = id;
+        this.owner = owner;
+        this.mirroredRepository = mirroredRepository;
+        this.featureBranch = featureBranch;
+        this.targetBranch = targetBranch;
+        this.title = title;
+    }
 
     public Long getId() {
         return id;
@@ -129,19 +143,18 @@ public class FeatureBranchReviewRequest {
     }
 
 
-    public static class Serializer extends EntitySerializer<FeatureBranchReviewRequest> {
+    public static class Serializer extends EntitySerializer<FeatureBranchRequest> {
         public Serializer() {
             super(
-                    MapBuilder.<String, Function<FeatureBranchReviewRequest, ?>>linkedHashMap()
+                    MapBuilder.<String, Function<FeatureBranchRequest, ?>>linkedHashMap()
                             .put("id", o -> o.getId())
                             .put("owner", o -> o.getOwner())
-                            .put("reviewRequest", o -> o.getReviewRequest())
+                            // .put("reviewRequest", o -> o.getReviewRequest())
                             .put("title", o -> o.getTitle())
-                            .put("description", o -> o.getDescription())
+                            //.put("description", o -> o.getDescription())
                             .put("mirroredRepository", o -> o.getMirroredRepository())
                             .put("featureBranch", o -> o.getFeatureBranch())
                             .put("targetBranch", o -> o.getTargetBranch())
-
                             .build()
             );
 

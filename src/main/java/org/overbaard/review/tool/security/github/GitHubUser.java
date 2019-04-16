@@ -31,7 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.overbaard.review.tool.config.github.Organisation;
-import org.overbaard.review.tool.review.FeatureBranchReviewRequest;
+import org.overbaard.review.tool.review.FeatureBranchRequest;
 import org.overbaard.review.tool.review.ReviewRequest;
 import org.overbaard.review.tool.util.EntitySerializer;
 import org.overbaard.review.tool.util.MapBuilder;
@@ -95,7 +95,7 @@ public class GitHubUser {
     private List<ReviewRequest> reviewRequests = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private List<FeatureBranchReviewRequest> featureBranchReviewRequests = new ArrayList<>();
+    private List<FeatureBranchRequest> featureBranchRequests = new ArrayList<>();
 
     public GitHubUser() {
     }
@@ -175,12 +175,12 @@ public class GitHubUser {
         this.reviewRequests = reviewRequests;
     }
 
-    public List<FeatureBranchReviewRequest> getFeatureBranchReviewRequests() {
-        return featureBranchReviewRequests;
+    public List<FeatureBranchRequest> getFeatureBranchRequests() {
+        return featureBranchRequests;
     }
 
-    public void setFeatureBranchReviewRequests(List<FeatureBranchReviewRequest> featureBranchReviewRequests) {
-        this.featureBranchReviewRequests = featureBranchReviewRequests;
+    public void setFeatureBranchRequests(List<FeatureBranchRequest> featureBranchRequests) {
+        this.featureBranchRequests = featureBranchRequests;
     }
 
     public void addReviewRequest(ReviewRequest reviewRequest) {

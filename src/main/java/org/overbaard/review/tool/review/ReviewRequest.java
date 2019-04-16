@@ -73,7 +73,7 @@ public class ReviewRequest {
     private Organisation organisation;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reviewRequest")
-    private List<FeatureBranchReviewRequest> featureBranchReviewRequests = new ArrayList<>();
+    private List<FeatureBranchRequest> featureBranchRequests = new ArrayList<>();
 
 
     @Column(nullable = false)
@@ -98,6 +98,11 @@ public class ReviewRequest {
     }
 
     public ReviewRequest(String title, String issueTrackerLink, String description) {
+        this(null, title, issueTrackerLink, description);
+    }
+
+    public ReviewRequest(Long id, String title, String issueTrackerLink, String description) {
+        this.id = id;
         this.title = title;
         this.issueTrackerLink = issueTrackerLink;
         this.description = description;
@@ -151,12 +156,12 @@ public class ReviewRequest {
         this.issueTrackerLink = issueTrackerLink;
     }
 
-    public List<FeatureBranchReviewRequest> getFeatureBranchReviewRequests() {
-        return featureBranchReviewRequests;
+    public List<FeatureBranchRequest> getFeatureBranchRequests() {
+        return featureBranchRequests;
     }
 
-    public void setFeatureBranchReviewRequests(List<FeatureBranchReviewRequest> featureBranchReviewRequests) {
-        this.featureBranchReviewRequests = featureBranchReviewRequests;
+    public void setFeatureBranchRequests(List<FeatureBranchRequest> featureBranchRequests) {
+        this.featureBranchRequests = featureBranchRequests;
     }
 
     public static class Serializer extends EntitySerializer<ReviewRequest> {
@@ -169,10 +174,9 @@ public class ReviewRequest {
                             .put("title", o -> o.getTitle())
                             .put("description", o -> o.getDescription())
                             .put("issueTrackerLink", o -> o.getIssueTrackerLink())
-                            .put("featureBranchReviewRequests", o -> o.getFeatureBranchReviewRequests())
-                            .build()
-            );
-
+                            .put("featureBranchRequests", o -> o.getFeatureBranchRequests())
+                            .build());
         }
+
     }
 }
