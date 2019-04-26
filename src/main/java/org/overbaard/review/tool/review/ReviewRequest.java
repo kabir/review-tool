@@ -164,6 +164,16 @@ public class ReviewRequest {
         this.featureBranchRequests = featureBranchRequests;
     }
 
+    public void addFeatureBranchRequest(FeatureBranchRequest fbr) {
+        this.featureBranchRequests.add(fbr);
+        fbr.setReviewRequest(this);
+    }
+
+    public void removeFeatureBranchRequest(FeatureBranchRequest fbr) {
+        this.featureBranchRequests.remove(fbr);
+        fbr.setReviewRequest(null);
+    }
+
     public static class Serializer extends EntitySerializer<ReviewRequest> {
         public Serializer() {
             super(

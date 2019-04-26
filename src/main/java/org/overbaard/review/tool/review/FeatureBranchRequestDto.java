@@ -39,18 +39,23 @@ public class FeatureBranchRequestDto {
         return create(f, Level.SUMMARY);
     }
 
+    public static FeatureBranchRequestDto detail(FeatureBranchRequest f) {
+        return create(f, Level.SUMMARY);
+    }
+
     private static FeatureBranchRequestDto create(FeatureBranchRequest f, Level level) {
         return new FeatureBranchRequestDto(
                 f.getId(),
                 f.getTitle(),
                 GitHubUserDto.summary(f.getOwner()),
-                null,
-                null,
-                null,
-                null,
-                null
+                level == Level.DETAIL ? f.getDescription() : null,
+                level == Level.DETAIL ? f.getFeatureBranch() : null,
+                level == Level.DETAIL ? f.getTargetBranch() : null,
+                level == Level.DETAIL ? MirroredRepositoryDto.summary(f.getMirroredRepository()) : null,
+                level == Level.DETAIL ? ReviewRequestDto.summary(f.getReviewRequest()) : null
         );
     }
+
 
     public Long getId() {
         return id;
@@ -85,6 +90,7 @@ public class FeatureBranchRequestDto {
     }
 
     private enum Level {
-        SUMMARY
+        SUMMARY,
+        DETAIL
     }
 }

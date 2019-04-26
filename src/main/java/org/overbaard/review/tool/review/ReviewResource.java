@@ -16,6 +16,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.overbaard.review.tool.config.github.Organisation;
@@ -39,7 +40,7 @@ public class ReviewResource {
 
     @GET
     @Transactional
-    public List<ReviewRequestDto> getAllReviews(@PathParam("orgId") Long orgId) {
+    public List<ReviewRequestDto> getAllReviews() {
         List<ReviewRequest> reviewRequests = em.createNamedQuery(ReviewRequest.Q_FIND_ALL, ReviewRequest.class)
                 .setHint("javax.persistence.fetchgraph", ReviewRequest.G_OWNER)
                 .getResultList();
@@ -67,10 +68,11 @@ public class ReviewResource {
     @Path("{reviewId}")
     @Transactional
     public ReviewRequestDto getReviewRequestDetail(@PathParam("reviewId") Long reviewId) {
-        ReviewRequest reviewRequest = em.find(ReviewRequest.class, reviewId);
+        ReviewRequest rr = loadReviewRequest(reviewId);
+
         // TODO optimise query/eager loading
 
-        ReviewRequestDto dto = ReviewRequestDto.detail(reviewRequest);
+        ReviewRequestDto dto = ReviewRequestDto.detail(rr);
         return dto;
     }
 
@@ -80,6 +82,9 @@ public class ReviewResource {
     public Response createReviewRequest(@PathParam("orgId") Long orgId, ReviewRequest reviewRequest) {
         GitHubUser owner = em.find(GitHubUser.class, gitHubCredential.getId());
         Organisation org = em.find(Organisation.class, orgId);
+        if (org == null) {
+            throw new WebApplicationException("No organisation found with id:" + orgId, 404);
+        }
 
         owner.addReviewRequest(reviewRequest);
         org.addReviewRequest(reviewRequest);
@@ -94,7 +99,7 @@ public class ReviewResource {
     @Path("{reviewId}")
     @Transactional
     public Response updateReviewRequest(@PathParam("reviewId") Long reviewId, ReviewRequest reviewRequest) {
-        ReviewRequest rr = em.find(ReviewRequest.class, reviewId);
+        ReviewRequest rr = loadReviewRequest(reviewId);
 
         rr.setTitle(reviewRequest.getTitle());
         rr.setIssueTrackerLink(reviewRequest.getIssueTrackerLink());
@@ -107,41 +112,82 @@ public class ReviewResource {
     @Path("{reviewId}")
     @Transactional
     public Response deleteReviewRequest(@PathParam("reviewId") Long reviewId) {
-        ReviewRequest rr = em.getReference(ReviewRequest.class, reviewId);
+        // In practice we probably won't use this, but rather close a request. Still it is good for putting
+        // the unit tests back to their original state
+        ReviewRequest rr = loadReviewRequest(reviewId);
         em.remove(rr);
         return Response.status(204).build();
     }
 
     @POST
-    @Path("review/{reviewId}/branch")
+    @Path("{reviewId}/branch")
     @Transactional
-    public Response addReviewRequestFeatureBranch(
-            @PathParam("orgId") Long orgId, @PathParam("reviewId") Long reviewId, FeatureBranchRequest branchReviewRequest) {
-        return Response.status(201).build();
+    public Response addReviewRequestFeatureBranch(@PathParam("reviewId") Long reviewId, FeatureBranchRequest featureBranchRequest) {
+        ReviewRequest rr = loadReviewRequest(reviewId);
+
+        // TODO figure out the owner field here and the mirrored repository here
+        rr.addFeatureBranchRequest(featureBranchRequest);
+        em.persist(featureBranchRequest);
+
+        FeatureBranchRequestDto dto = FeatureBranchRequestDto.summary(featureBranchRequest);
+
+        return Response.ok(dto).status(201).build();
     }
 
     @GET
-    @Path("organisation/{orgId}/review/{reviewId}/branch/{branchId}")
+    @Path("{reviewId}/branch/{featureBranchId}")
     @Transactional
-    public Response getReviewRequestFeatureBranchDetail(
-            @PathParam("orgId") Long orgId, @PathParam("reviewId") Long reviewId, @PathParam("branchId") Long branchId) {
-        return Response.status(204).build();
+    public FeatureBranchRequestDto getReviewRequestFeatureBranchDetail(
+            @PathParam("reviewId") Long reviewId, @PathParam("featureBranchId") Long branchId) {
+        ReviewRequest rr = loadReviewRequest(reviewId);
+        FeatureBranchRequest fbr = loadFeatureBranchRequest(branchId);
+
+        return FeatureBranchRequestDto.detail(fbr);
     }
 
     @PUT
-    @Path("organisation/{orgId}/review/{reviewId}/branch/{branchId}")
+    @Path("{reviewId}/branch/{featureBranchId}")
     @Transactional
     public Response updateReviewRequestFeatureBranch(
-            @PathParam("orgId") Long orgId, @PathParam("reviewId") Long reviewId,
-            @PathParam("branchId") Long branchId, FeatureBranchRequest branchReviewRequest) {
+            @PathParam("reviewId") Long reviewId, @PathParam("featureBranchId") Long branchId, FeatureBranchRequest featureBranchRequest) {
+        ReviewRequest rr = loadReviewRequest(reviewId);
+        FeatureBranchRequest fbr = loadFeatureBranchRequest(branchId);
+
+        fbr.setDescription(featureBranchRequest.getDescription());
+        fbr.setFeatureBranch(featureBranchRequest.getFeatureBranch());
+        fbr.setTargetBranch(featureBranchRequest.getTargetBranch());
+        fbr.setTitle(featureBranchRequest.getTitle());
+
         return Response.status(204).build();
     }
 
     @DELETE
-    @Path("organisation/{orgId}/review/{reviewId}/branch/{branchId}")
+    @Path("{reviewId}/branch/{featureBranchId}")
     @Transactional
-    public Response deleteReviewRequestFeatureBranch(
-            @PathParam("orgId") Long orgId, @PathParam("reviewId") Long reviewId, @PathParam("branchId") Long branchId) {
+    public Response deleteReviewRequestFeatureBranch(@PathParam("reviewId") Long reviewId, @PathParam("featureBranchId") Long branchId) {
+        ReviewRequest rr = loadReviewRequest(reviewId);
+        FeatureBranchRequest fbr = loadFeatureBranchRequest(branchId);
+
+        rr.removeFeatureBranchRequest(fbr);
+
+        em.remove(fbr);
+
         return Response.status(204).build();
+    }
+
+    private ReviewRequest loadReviewRequest(Long reviewId) {
+        ReviewRequest rr = em.find(ReviewRequest.class, reviewId);
+        if (rr == null) {
+            throw new WebApplicationException("No review found with id:" + reviewId, 404);
+        }
+        return rr;
+    }
+
+    private FeatureBranchRequest loadFeatureBranchRequest(Long branchId) {
+        FeatureBranchRequest fbr = em.find(FeatureBranchRequest.class, branchId);
+        if (fbr == null) {
+            throw new WebApplicationException("No feature branch found with id:" + branchId, 404);
+        }
+        return fbr;
     }
 }
